@@ -1,5 +1,4 @@
 // Preview journal entries are kept in this file until storage is connected.
-const isLoggedIn = false;
 const exampleEntries = [
   { date: "Today · 9:15 AM", text: "I got outside for a little walk and the sunshine felt so good.", mood: "😊" },
   { date: "Yesterday · 8:42 PM", text: "A busy day, but I’m proud of myself for getting through it.", mood: "🌤️" },
@@ -9,8 +8,6 @@ const exampleEntries = [
 const entriesList = document.querySelector("#entries-list");
 const entryCount = document.querySelector("#entry-count");
 const guestEntryPrompt = document.querySelector("#guest-entry-prompt");
-const loginLink = document.querySelector("#nav-login");
-const logoutLink = document.querySelector("#nav-logout");
 
 function renderEntries(entries) {
   entriesList.replaceChildren();
@@ -40,14 +37,20 @@ function renderEntries(entries) {
 }
 
 // Show saved-entry previews only for logged-in users; guests see the login prompt.
-loginLink.hidden = isLoggedIn;
-logoutLink.hidden = !isLoggedIn;
-guestEntryPrompt.hidden = isLoggedIn;
-entriesList.hidden = !isLoggedIn;
-entryCount.hidden = !isLoggedIn;
-if (isLoggedIn) {
-  renderEntries(exampleEntries);
+function updateEntryAccess() {
+  guestEntryPrompt.hidden = isLoggedIn;
+  entriesList.hidden = !isLoggedIn;
+  entryCount.hidden = !isLoggedIn;
+  if (isLoggedIn) {
+    renderEntries(exampleEntries);
+  } else {
+    entriesList.replaceChildren();
+    entryCount.textContent = "";
+  }
 }
+
+updateEntryAccess();
+document.addEventListener("moodjournal:auth-change", updateEntryAccess);
 
 // Local mood details power the demo result until a mood service is connected.
 const moodDetails = {

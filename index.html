@@ -9,59 +9,22 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <script src="index.js" defer></script>
+  <script src="navbar.js" defer></script>
+  <script src="effects.js" defer></script>
 </head>
 <body class="welcome-page">
-  <!-- Welcome page with immediate guest access -->
+  <!-- Shared navigation and account controls are injected on every page. -->
+  <header id="navbar" class="site-header"></header>
+
+  <!-- The centered welcome card is the only page content below the navbar. -->
   <main class="welcome-shell">
-    <a class="brand auth-brand" href="index.html" aria-label="MoodJournal home">MoodJournal</a>
     <section class="welcome-hero surface-card" aria-labelledby="welcome-title">
       <div class="hero-emoji" aria-hidden="true">🌈 💜 🌷</div>
       <div class="section-eyebrow">A little space just for you ✨</div>
       <h1 id="welcome-title">Your feelings matter.</h1>
       <p class="muted-copy">Pause, write what’s on your mind, and make room for every feeling. Your journal is ready whenever you are.</p>
       <a class="button button-primary start-button" href="app.html">Start journaling <span aria-hidden="true">→</span></a>
-      <p class="guest-note">No account needed to get started 💜</p>
-    </section>
-
-    <!-- Optional login and sign-up forms for users who want to save history -->
-    <section class="auth-card optional-auth-card" id="account" aria-labelledby="account-title">
-      <div class="section-eyebrow">Keep your moments together</div>
-      <h2 id="account-title">Want to save your history?</h2>
-      <p class="muted-copy">Log in or sign up to save your journal entries.</p>
-
-      <!-- Login and sign-up tabs -->
-      <div class="tab-list" role="tablist" aria-label="Account options">
-        <button class="tab-button is-active" id="login-tab" type="button" role="tab" aria-selected="true" aria-controls="login-panel">Login</button>
-        <button class="tab-button" id="signup-tab" type="button" role="tab" aria-selected="false" aria-controls="signup-panel">Sign Up</button>
-      </div>
-
-      <!-- Login form -->
-      <form class="auth-form" id="login-panel" role="tabpanel" aria-labelledby="login-tab">
-        <label for="login-email">Email</label>
-        <input id="login-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required>
-        <label for="login-password">Password</label>
-        <input id="login-password" name="password" type="password" placeholder="Your password" autocomplete="current-password" required>
-        <button class="button button-primary button-full" type="submit">Login <span aria-hidden="true">→</span></button>
-      </form>
-
-      <!-- Sign-up form -->
-      <form class="auth-form" id="signup-panel" role="tabpanel" aria-labelledby="signup-tab" hidden>
-        <label for="signup-email">Email</label>
-        <input id="signup-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required>
-        <label for="signup-password">Password</label>
-        <input id="signup-password" name="password" type="password" placeholder="Create a password" autocomplete="new-password" required>
-        <label for="confirm-password">Confirm password</label>
-        <input id="confirm-password" name="confirm-password" type="password" placeholder="Type it one more time" autocomplete="new-password" required>
-        <button class="button button-primary button-full" type="submit">Create account <span aria-hidden="true">→</span></button>
-      </form>
-
-      <!-- Empty area for friendly form feedback -->
-      <p class="form-message" id="auth-message" role="status" aria-live="polite"></p>
-      <p class="privacy-note">A gentle reminder: it’s okay to feel it all. 💜</p>
     </section>
   </main>
-  <!-- Shared decorative effects are disabled when reduced motion is preferred -->
-  <script src="effects.js" defer></script>
 </body>
 </html>

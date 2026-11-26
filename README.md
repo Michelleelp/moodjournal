@@ -95,3 +95,22 @@ Update app.html and app.js in the MoodJournal project. Do NOT add Firebase or Hu
 
 5. While analyzing, show a short loading state on the button ("Analyzing... ✨") for about 1 second, then show the result card with its fade and slide-up animation.
 
+------------------------
+5. 
+Update the MoodJournal front-end (index.html, app.html, contact.html, style.css and the JS files). Keep the soft purple and white cute style. Do NOT add Firebase or Hugging Face yet.
+
+1. Shared navbar on ALL three pages (index.html, app.html, contact.html), fixed at the top and always visible (position sticky or fixed, white background, soft shadow, high z-index above the emoji rain). It contains:
+   - On the left: the text "MoodJournal" (with the hidden img placeholder for assets/logo.png). Clicking it must go to index.html.
+   - On the right: links "Journal" (app.html) and "Contact" (contact.html), highlighting the current page, plus two buttons: "Login" and "Sign Up".
+   - When the variable isLoggedIn is true, replace the Login and Sign Up buttons with a "Logout" button.
+   Put the navbar code in a shared navbar.js file that injects the navbar HTML into a <header id="navbar"></header> element, so I do not repeat the same HTML on every page. Make it responsive (on mobile, collapse the links into a simple menu button).
+
+2. index.html: remove the "Want to save your history?" login section from the page body. The page body must show ONLY the centered "Your feelings matter." welcome card with the "Start journaling" button.
+
+3. Make the "Start journaling" button pulse with a heartbeat animation (a gentle grow and shrink loop, with a soft purple glow). Pause the animation on hover and respect prefers-reduced-motion.
+
+4. Auth modal: create a shared modal (also injected by navbar.js) with the Login / Sign Up tabs and the existing forms (email and password for Login; email, password and confirm password for Sign Up; an empty area for error messages). The "Login" button in the navbar opens the modal on the Login tab, and the "Sign Up" button opens it on the Sign Up tab. The modal must close with an X button, by clicking outside it, or by pressing Escape, and it must open with a smooth fade and scale animation. It must work on every page.
+
+5. Make sure the existing "Login" buttons in app.html (past entries area) open the same modal instead of linking to index.html.
+
+Add comments in the code explaining each part.
