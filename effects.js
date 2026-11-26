@@ -30,10 +30,16 @@ if (!reducedMotionPreference.matches) {
 
     const drop = document.createElement("span");
     const fallDuration = 10 + Math.random() * 8;
+    const sizeRoll = Math.random();
+    const fontSize = sizeRoll < 0.72
+      ? 25 + Math.random() * 20
+      : sizeRoll < 0.93
+        ? 45 + Math.random() * 20
+        : 65 + Math.random() * 26;
     drop.className = "emoji-rain-drop";
     drop.textContent = emotionEmojis[Math.floor(Math.random() * emotionEmojis.length)];
     drop.style.left = `${Math.random() * 100}%`;
-    drop.style.fontSize = `${20 + Math.random() * 16}px`;
+    drop.style.fontSize = `${fontSize}px`;
     drop.style.setProperty("--fall-duration", `${fallDuration}s`);
     drop.addEventListener("animationend", () => drop.remove(), { once: true });
     rainLayer.append(drop);

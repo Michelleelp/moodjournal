@@ -49,17 +49,81 @@ if (isLoggedIn) {
   renderEntries(exampleEntries);
 }
 
-// A small keyword-based mood preview runs entirely in the browser.
+// Local mood details power the demo result until a mood service is connected.
+const moodDetails = {
+  joy: {
+    name: "Joy",
+    emoji: "😊",
+    message: "Let yourself enjoy this bright moment; you deserve the good things in your life. Keep a little space for this happiness and let it recharge you."
+  },
+  sadness: {
+    name: "Sadness",
+    emoji: "😢",
+    message: "You don’t have to push these feelings away; it’s okay to take things slowly. Be gentle with yourself and reach out to someone you trust if you need company."
+  },
+  anger: {
+    name: "Anger",
+    emoji: "😡",
+    message: "It makes sense that strong feelings need space, and you can pause before deciding what to do next. Take a slow breath and give yourself kindness while the intensity settles."
+  },
+  fear: {
+    name: "Fear",
+    emoji: "😨",
+    message: "You’re allowed to feel uncertain, and you don’t have to solve everything at once. Focus on one steady breath and one small thing you can do right now."
+  },
+  surprise: {
+    name: "Surprise",
+    emoji: "😲",
+    message: "Unexpected moments can take time to settle, and you can give yourself that time. Notice what you need next, then take it one step at a time."
+  },
+  disgust: {
+    name: "Disgust",
+    emoji: "🤢",
+    message: "It’s okay to have a strong reaction, and you can honor what feels uncomfortable to you. Give yourself space to reset and choose what feels right for you."
+  },
+  neutral: {
+    name: "Neutral",
+    emoji: "😌",
+    message: "A steady or quiet mood is meaningful too, and you don’t need to make it into anything else. Keep checking in with yourself and let today unfold at your own pace."
+  }
+};
+
+const resultEmoji = document.querySelector("#result-emoji");
+const resultMood = document.querySelector("#result-mood");
+const resultMessage = document.querySelector("#result-message");
+const moodResult = document.querySelector("#mood-result");
+
+// Show the chosen mood with its emoji, supportive copy, and animated card.
+function showMood(moodName) {
+  if (!Object.prototype.hasOwnProperty.call(moodDetails, moodName)) {
+    throw new RangeError(`Unknown mood: ${moodName}`);
+  }
+  const mood = moodDetails[moodName];
+
+  resultEmoji.textContent = mood.emoji;
+  resultMood.textContent = mood.name;
+  resultMessage.textContent = mood.message;
+  moodResult.dataset.mood = moodName;
+
+  if (moodResult.hidden) {
+    moodResult.hidden = false;
+    window.requestAnimationFrame(() => moodResult.classList.add("is-visible"));
+  }
+}
+
+// Keep keyword matching local while routing all results through showMood().
 const moodKeywords = [
-  { terms: ["happy", "great", "joy", "excited", "good", "grateful", "love"], mood: "Feeling bright", emoji: "😊", message: "Let yourself enjoy this moment. You deserve to feel the good things. 🌼" },
-  { terms: ["sad", "down", "lonely", "cry", "hard", "tired", "anxious", "worried", "stress"], mood: "Taking it gently", emoji: "🌧️", message: "It’s okay not to feel okay. Take one small breath at a time; you don’t have to figure it all out right now. 💜" },
-  { terms: ["angry", "frustrated", "annoyed", "upset"], mood: "Working through it", emoji: "🌋", message: "Your feelings are valid. Give yourself a little space, and be gentle with yourself as you work through them. 🌱" }
+  { terms: ["happy", "great", "joy", "excited", "good", "grateful", "love"], mood: "joy" },
+  { terms: ["sad", "down", "lonely", "cry", "hard", "tired", "disappointed"], mood: "sadness" },
+  { terms: ["angry", "frustrated", "annoyed", "upset", "mad"], mood: "anger" },
+  { terms: ["anxious", "worried", "stress", "scared", "afraid", "nervous"], mood: "fear" },
+  { terms: ["surprised", "unexpected", "shocked", "amazed"], mood: "surprise" },
+  { terms: ["disgusted", "gross", "repulsed", "nauseated"], mood: "disgust" }
 ];
 
 const analyzeButton = document.querySelector("#analyze-button");
 const journalText = document.querySelector("#journal-text");
 const journalMessage = document.querySelector("#journal-message");
-const moodResult = document.querySelector("#mood-result");
 
 analyzeButton.addEventListener("click", () => {
   const entry = journalText.value.trim();
@@ -71,16 +135,12 @@ analyzeButton.addEventListener("click", () => {
 
   const normalizedText = entry.toLowerCase();
   const matchedMood = moodKeywords.find((item) => item.terms.some((term) => normalizedText.includes(term)));
-  const result = matchedMood || {
-    mood: "Making space for today",
-    emoji: "🌱",
-    message: "Thank you for checking in with yourself. Whatever you’re feeling, it’s okay to take things at your own pace. 💜"
-  };
-
-  document.querySelector("#result-emoji").textContent = result.emoji;
-  document.querySelector("#result-mood").textContent = result.mood;
-  document.querySelector("#result-message").textContent = result.message;
-  moodResult.hidden = false;
+  showMood(matchedMood ? matchedMood.mood : "neutral");
   journalMessage.textContent = "";
   moodResult.scrollIntoView({ behavior: "smooth", block: "nearest" });
+});
+
+// Temporary mood buttons make every card appearance available for preview.
+document.querySelectorAll("[data-mood-preview]").forEach((button) => {
+  button.addEventListener("click", () => showMood(button.dataset.moodPreview));
 });

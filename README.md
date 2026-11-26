@@ -32,3 +32,20 @@ Add comments in the code explaining each section.
 Add comments in the code explaining each part. 
 
 (IMPORVEMENTS- CHANGES DE DESIGN) (Decisión de diseño: Cambié el login obligatorio por un modo invitado con login opcional, para que sea más fácil entrar, sin perder el requisito de Firebase Authentication.)
+
+
+
+3. Update the MoodJournal front-end (style.css, effects.js, app.html, app.js). Keep the soft purple and white cute style. Do NOT add Firebase or API calls yet.
+
+1. Emoji rain: make the falling emojis a mix of sizes, from 25px to 90px (random). Keep them slow (10 to 18 seconds per fall), low opacity, behind the content, and limited to about 20 on screen. Make the biggest ones less frequent than the small ones.
+
+2. Typography: increase the font size across the whole app by about 10% (for example by raising the root font-size and using rem units). Check that buttons, inputs, navbar and cards still look balanced and responsive.
+
+3. Mood result card: redesign it. Create a function showMood(moodName) that receives one of: joy, sadness, anger, fear, surprise, disgust, neutral. For each mood it must:
+   - change the card background to a soft gradient with its own colors (joy: warm yellow to peach, sadness: soft blue to lavender, anger: soft coral to pink, fear: lilac to gray-purple, surprise: mint to light cyan, disgust: soft green to sage, neutral: lavender to white), with a smooth transition between colors;
+   - show a big emoji (about 5rem) with the heartbeat animation (grows and shrinks);
+   - show the mood name in large text (for example "Joy");
+   - show a supportive message written for that mood (2 sentences, warm and kind);
+   - appear with a gentle fade and slide-up animation.
+   Keep the text readable on every gradient.
+

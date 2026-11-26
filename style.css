@@ -1,5 +1,6 @@
 /* Theme colors and shared design tokens */
 :root {
+  font-size: 110%;
   color-scheme: light;
   --purple-950: #39245e;
   --purple-800: #5a3b87;
@@ -39,7 +40,7 @@ body > :not(.emoji-rain) { position: relative; z-index: 1; }
 .emoji-rain-drop {
   position: absolute;
   top: -2.5rem;
-  opacity: 0.5;
+  opacity: 0.45;
   user-select: none;
   animation: emoji-fall var(--fall-duration) linear forwards;
   will-change: transform;
@@ -152,10 +153,72 @@ input:focus, textarea:focus { border-color: var(--purple-600); box-shadow: 0 0 0
 .journal-composer textarea { min-height: 154px; border-color: transparent; background: #fcfaff; font-size: 1rem; }
 .composer-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 14px; }
 .helper-copy { color: var(--muted); font-size: 0.88rem; }
-.result-card { display: flex; align-items: center; gap: 24px; margin-top: 24px; padding: 24px 30px; background: linear-gradient(110deg, #fff 55%, #f3edfc); }
-.result-card h2, .result-card p { margin-bottom: 5px; }
-.result-emoji { flex: 0 0 auto; display: grid; width: 90px; height: 90px; place-items: center; border-radius: 50%; background: var(--purple-100); font-size: 3.5rem; animation: heartbeat 1.7s ease-in-out infinite; }
+@property --mood-start {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #e6daf6;
+}
+@property --mood-end {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #ffffff;
+}
+.result-card {
+  --mood-start: #e6daf6;
+  --mood-end: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  margin-top: 24px;
+  padding: clamp(24px, 4vw, 34px);
+  border-color: rgba(255, 255, 255, 0.72);
+  background: linear-gradient(115deg, var(--mood-start), var(--mood-end));
+  color: var(--purple-950);
+  opacity: 0;
+  transform: translateY(14px);
+  transition: --mood-start 650ms ease, --mood-end 650ms ease, opacity 450ms ease, transform 450ms ease;
+}
+.result-card.is-visible { opacity: 1; transform: translateY(0); }
+.result-card[data-mood="joy"] { --mood-start: #fff2ad; --mood-end: #ffd1b8; }
+.result-card[data-mood="sadness"] { --mood-start: #cbe4fa; --mood-end: #e8ddf8; }
+.result-card[data-mood="anger"] { --mood-start: #ffd0c7; --mood-end: #ffe0e8; }
+.result-card[data-mood="fear"] { --mood-start: #e4d8f6; --mood-end: #d7d1e2; }
+.result-card[data-mood="surprise"] { --mood-start: #d2f3df; --mood-end: #c9eff5; }
+.result-card[data-mood="disgust"] { --mood-start: #dcefd7; --mood-end: #cbd9c5; }
+.result-card[data-mood="neutral"] { --mood-start: #e6daf6; --mood-end: #ffffff; }
+.result-card .section-eyebrow { color: var(--purple-800); }
+.result-card h2 { margin-bottom: 9px; font-size: clamp(2rem, 4vw, 2.45rem); }
+.result-card p { max-width: 680px; margin-bottom: 0; color: #55486c; font-size: 1.04rem; line-height: 1.65; }
+.result-emoji {
+  display: grid;
+  flex: 0 0 112px;
+  width: 112px;
+  height: 112px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: inset 0 3px 12px rgba(255, 255, 255, 0.45), 0 8px 20px rgba(75, 58, 103, 0.08);
+  font-size: 5rem;
+  animation: heartbeat 1.7s ease-in-out infinite;
+}
 @keyframes heartbeat { 0%, 100% { transform: scale(1); } 14% { transform: scale(1.12); } 28% { transform: scale(1); } 42% { transform: scale(1.08); } 70% { transform: scale(1); } }
+.mood-preview-tools { display: flex; flex-wrap: wrap; justify-content: center; gap: 9px; margin: 14px 0 0; }
+.mood-preview-button {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 1px solid var(--purple-200);
+  border-radius: 13px;
+  background: var(--white);
+  box-shadow: var(--soft-shadow);
+  font-size: 1.55rem;
+  cursor: pointer;
+  transition: transform 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+}
+.mood-preview-button:hover { transform: translateY(-2px); background: var(--purple-100); box-shadow: var(--shadow); }
+.mood-preview-button:focus-visible { outline: 3px solid #c8b3ea; outline-offset: 3px; }
 .entries-section { margin-top: 52px; }
 .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
 .section-heading h2 { margin-bottom: 0; }
@@ -183,15 +246,16 @@ input:focus, textarea:focus { border-color: var(--purple-600); box-shadow: 0 0 0
 @media (max-width: 600px) {
   .page-width { width: min(100% - 32px, 1060px); }
   .navbar { min-height: 68px; }
-  .brand { gap: 7px; font-size: 1rem; }
+  .navbar { gap: 10px; }
+  .brand { gap: 7px; font-size: 0.9rem; }
   .brand-mark { width: 32px; height: 32px; }
-  .nav-links { gap: 12px; }
-  .nav-link { font-size: 0.85rem; }
+  .nav-links { gap: 8px; }
+  .nav-link { font-size: 0.78rem; }
   .button-small { min-height: 36px; padding: 7px 11px; font-size: 0.82rem; }
   .composer-footer { align-items: stretch; flex-direction: column; }
   .composer-footer .button { width: 100%; }
   .result-card { align-items: flex-start; gap: 16px; padding: 20px; }
-  .result-emoji { width: 65px; height: 65px; font-size: 2.6rem; }
+  .result-emoji { flex-basis: 84px; width: 84px; height: 84px; font-size: 4rem; }
   .entry-card { gap: 12px; padding: 16px; }
   .contact-decoration { top: 19px; right: 20px; width: 46px; height: 46px; font-size: 1.45rem; }
 }

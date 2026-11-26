@@ -46,15 +46,26 @@
       <p class="form-message" id="journal-message" role="status" aria-live="polite"></p>
     </section>
 
-    <!-- Mood result, revealed after local demo analysis -->
-    <section class="result-card surface-card" id="mood-result" aria-live="polite" hidden>
+    <!-- Mood result updates to a supportive, mood-specific color and message -->
+    <section class="result-card surface-card" id="mood-result" data-mood="neutral" aria-live="polite" hidden>
       <div class="result-emoji" id="result-emoji" aria-hidden="true">😊</div>
       <div>
         <div class="section-eyebrow">Your mood check-in</div>
-        <h2 id="result-mood">Feeling hopeful</h2>
+        <h2 id="result-mood">Neutral</h2>
         <p id="result-message" class="muted-copy"></p>
       </div>
     </section>
+
+    <!-- TEMPORARY - remove when Hugging Face is connected -->
+    <div class="mood-preview-tools" role="group" aria-label="Temporary mood previews">
+      <button class="mood-preview-button" type="button" data-mood-preview="joy" aria-label="Preview joy mood" title="Joy">😊</button>
+      <button class="mood-preview-button" type="button" data-mood-preview="sadness" aria-label="Preview sadness mood" title="Sadness">😢</button>
+      <button class="mood-preview-button" type="button" data-mood-preview="anger" aria-label="Preview anger mood" title="Anger">😡</button>
+      <button class="mood-preview-button" type="button" data-mood-preview="fear" aria-label="Preview fear mood" title="Fear">😨</button>
+      <button class="mood-preview-button" type="button" data-mood-preview="surprise" aria-label="Preview surprise mood" title="Surprise">😲</button>
+      <button class="mood-preview-button" type="button" data-mood-preview="disgust" aria-label="Preview disgust mood" title="Disgust">🤢</button>
+      <button class="mood-preview-button" type="button" data-mood-preview="neutral" aria-label="Preview neutral mood" title="Neutral">😌</button>
+    </div>
 
     <!-- Past journal entries are populated by app.js -->
     <section class="entries-section" aria-labelledby="entries-title">
