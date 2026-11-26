@@ -8,9 +8,10 @@ const currentPage = window.location.pathname.split("/").pop().toLowerCase() || "
 function renderNavbar() {
   const journalCurrent = currentPage === "app.html";
   const contactCurrent = currentPage === "contact.html";
+  // Account actions use the same notebook-tab classes as the page links.
   const accountActions = isLoggedIn
-    ? '<button class="button button-outline button-small" id="nav-logout" type="button">Logout</button>'
-    : '<button class="button button-outline button-small" type="button" data-open-auth="login">Login</button><button class="button button-primary button-small" type="button" data-open-auth="signup">Sign Up</button>';
+    ? '<button class="nav-link nav-tab nav-tab-logout" id="nav-logout" type="button">Logout</button>'
+    : '<button class="nav-link nav-tab nav-tab-login" type="button" data-open-auth="login">Login</button><button class="nav-link nav-tab nav-tab-signup" type="button" data-open-auth="signup">Sign Up</button>';
 
   navbarHost.innerHTML = `
     <nav class="navbar page-width" aria-label="Main navigation">

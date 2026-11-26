@@ -157,12 +157,14 @@ input:focus, textarea:focus { border-color: var(--purple-600); box-shadow: 0 0 0
 .site-header { position: fixed; z-index: 1000; top: 0; right: 0; left: 0; width: 100%; border-bottom: 1px solid rgba(232, 222, 247, 0.7); background: rgba(255, 255, 255, 0.96); box-shadow: var(--soft-shadow); backdrop-filter: blur(12px); }
 .navbar { position: relative; display: flex; min-height: var(--navbar-height); align-items: center; justify-content: space-between; gap: 20px; }
 .nav-links { display: flex; height: var(--navbar-height); align-items: flex-end; gap: 8px; }
-.nav-account-actions { display: flex; align-items: center; align-self: center; gap: 9px; }
+.nav-account-actions { display: flex; align-items: flex-end; gap: 8px; }
 .menu-toggle { display: none; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 7px 12px; border: 1px solid var(--purple-200); border-radius: 12px; background: var(--white); color: var(--purple-800); font: inherit; font-size: 0.88rem; font-weight: 800; cursor: pointer; }
 .menu-toggle:focus-visible { outline: 3px solid #c8b3ea; outline-offset: 3px; }
-.nav-link { display: inline-flex; min-height: 45px; align-items: center; padding: 8px 18px 7px; border: 1px solid rgba(115, 82, 163, 0.1); border-bottom: 0; border-radius: 13px 13px 3px 3px; color: var(--purple-800); font-size: 0.96rem; font-weight: 800; text-decoration: none; transform: translateY(3px); transition: transform 170ms ease, background-color 170ms ease, box-shadow 170ms ease; }
+.nav-link { display: inline-flex; min-height: 45px; align-items: center; justify-content: center; padding: 8px 18px 7px; appearance: none; border: 1px solid rgba(115, 82, 163, 0.1); border-bottom: 0; border-radius: 13px 13px 3px 3px; color: var(--purple-800); font-size: 0.96rem; font-weight: 800; text-decoration: none; cursor: pointer; transform: translateY(3px); transition: transform 170ms ease, background-color 170ms ease, box-shadow 170ms ease; }
 .nav-tab-journal { background: #f1eafb; }
 .nav-tab-contact { background: #fff0f5; }
+.nav-tab-login, .nav-tab-logout { background: #e7f2fc; }
+.nav-tab-signup { background: #e7f5eb; }
 .nav-link:hover { z-index: 1; transform: translateY(-2px); }
 .nav-tab-journal.is-current { background: #e3d5f4; box-shadow: 0 4px 10px rgba(90, 59, 135, 0.13); color: var(--purple-950); transform: translateY(0); }
 .nav-tab-contact.is-current { background: #ffdeea; box-shadow: 0 4px 10px rgba(142, 80, 111, 0.12); color: var(--purple-950); transform: translateY(0); }
@@ -349,8 +351,9 @@ input:focus, textarea:focus { border-color: var(--purple-600); box-shadow: 0 0 0
   .nav-link { min-height: 40px; justify-content: flex-start; padding: 7px 12px; border: 1px solid rgba(115, 82, 163, 0.1); border-radius: 11px; transform: none; }
   .nav-link:hover { transform: translateX(2px); }
   .nav-tab-journal.is-current, .nav-tab-contact.is-current { transform: none; }
-  .nav-account-actions { display: flex; gap: 8px; }
-  .nav-account-actions .button { flex: 1; }
+  /* Stack account actions like the full-width page tabs in the mobile menu. */
+  .nav-account-actions { display: flex; flex-direction: column; gap: 12px; }
+  .nav-account-actions .nav-link { width: 100%; }
   .nav-link { font-size: 0.78rem; }
   .button-small { min-height: 36px; padding: 7px 11px; font-size: 0.82rem; }
   .composer-footer { align-items: stretch; flex-direction: column; }

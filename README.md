@@ -133,3 +133,14 @@ Add comments in the code explaining each part.
    - Put this code in month.js and include it in app.html.
 
 Add comments in the code explaining each part.
+
+
+
+----------------------
+7. Update navbar.js and style.css in the MoodJournal project.
+
+Restyle the "Login" and "Sign Up" buttons in the navbar so they look exactly like the "Journal" and "Contact" notebook divider tabs: same size, same font, same padding, same rounded top corners, same lift on hover, and same alignment with the other tabs. Give each one its own soft pastel color so all four tabs look like a matching set (for example Journal: lavender, Contact: pink, Login: soft blue, Sign Up: soft mint). Remove the white outlined style from Login and the solid dark purple style from Sign Up.
+
+They must still open the auth modal (Login tab and Sign Up tab) when clicked. When isLoggedIn is true, the "Logout" button must use the same tab style too. Keep the layout responsive, and keep the navbar visible above the emoji rain.
+
+Add comments in the code explaining the change.
