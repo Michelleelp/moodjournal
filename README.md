@@ -114,3 +114,22 @@ Update the MoodJournal front-end (index.html, app.html, contact.html, style.css 
 5. Make sure the existing "Login" buttons in app.html (past entries area) open the same modal instead of linking to index.html.
 
 Add comments in the code explaining each part.
+
+
+
+
+-------------------------
+6.Update the MoodJournal front-end (index.html, app.html, style.css, navbar.js, app.js and a new month.js). Keep the soft purple and white cute style, all text in English. Do NOT add Firebase or Hugging Face yet.
+
+1. Welcome card (index.html): remove the three emojis (rainbow, purple heart, tulip) from the card. Make the card bigger: max-width around 760px, more padding, a larger headline and description, and a bigger "Start journaling" button, while keeping everything centered and responsive.
+
+2. Navbar tab style (navbar.js and style.css): keep the top navbar as it is (logo "MoodJournal" on the left, links on the right, Login/Sign Up or Logout buttons). Restyle the links "Journal" and "Contact" like notebook divider tabs: rounded top corners, each tab with its own soft pastel color (for example lavender and pink), a slight lift on hover, and the active page's tab looks raised with a stronger color. Keep it responsive and make sure the navbar stays visible above the emoji rain.
+
+3. "My month in colors" card (app.html, below the mood result and above "My past entries"): create a card with the title "My month in colors", the subtitle "A tracker to color your mood each day of the month.", a row of small heart previews, and an "Open" button on the right. Clicking "Open" expands the card (smooth animation) to show the full calendar of the current month: a grid with one heart per day, with the day number under each heart, and week day labels (Mon to Sun). The button then says "Close".
+   - Clicking a heart opens a small popup palette to choose that day's color. Colors and names: Joy (soft yellow), Sadness (soft blue), Anger (soft coral), Fear (lilac), Surprise (mint), Disgust (soft green), Neutral (lavender), plus a "Clear" option to remove the color.
+   - Add previous and next month arrows with the month and year in the header, and a small legend showing each color with its mood name.
+   - The days without a color are shown as empty light hearts. Today's heart has a small highlight.
+   - Save the data in localStorage under keys like "moodjournal_month_YYYY-MM" (an object with day number -> mood name) so it works for guests and remains after reloading. Write the saving and loading in separate functions (saveMonthData, loadMonthData) so they can later be synced with Firebase Firestore for logged-in users.
+   - Put this code in month.js and include it in app.html.
+
+Add comments in the code explaining each part.

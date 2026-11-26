@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="style.css">
   <script src="navbar.js" defer></script>
   <script src="app.js" defer></script>
+  <script src="month.js" defer></script>
   <script src="effects.js" defer></script>
 </head>
 <body>
@@ -44,6 +45,43 @@
         <div class="section-eyebrow">Your mood check-in</div>
         <h2 id="result-mood">Neutral</h2>
         <p id="result-message" class="muted-copy"></p>
+      </div>
+    </section>
+
+    <!-- A collapsible monthly mood calendar, stored locally for guest access. -->
+    <section class="month-tracker-card surface-card" aria-labelledby="month-tracker-title">
+      <div class="month-tracker-summary">
+        <div class="month-summary-copy">
+          <div class="section-eyebrow">Little feelings, one day at a time</div>
+          <h2 id="month-tracker-title">My month in colors</h2>
+          <p class="muted-copy">A tracker to color your mood each day of the month.</p>
+          <div class="month-preview-hearts" role="img" aria-label="Mood color previews">
+            <span class="month-heart-preview" data-mood="joy" aria-hidden="true">♥</span>
+            <span class="month-heart-preview" data-mood="sadness" aria-hidden="true">♥</span>
+            <span class="month-heart-preview" data-mood="anger" aria-hidden="true">♥</span>
+            <span class="month-heart-preview" data-mood="fear" aria-hidden="true">♥</span>
+            <span class="month-heart-preview" data-mood="surprise" aria-hidden="true">♥</span>
+            <span class="month-heart-preview" data-mood="disgust" aria-hidden="true">♥</span>
+            <span class="month-heart-preview" data-mood="neutral" aria-hidden="true">♥</span>
+          </div>
+        </div>
+        <button class="button button-primary month-toggle" id="month-toggle" type="button" aria-expanded="false" aria-controls="month-calendar-panel">Open</button>
+      </div>
+
+      <!-- Calendar controls, weekday headings, daily hearts, and mood legend. -->
+      <div class="month-calendar-collapse" id="month-calendar-panel" aria-hidden="true" inert>
+        <div class="month-calendar-inner">
+          <div class="month-calendar-heading">
+            <button class="month-nav-button" id="month-previous" type="button" aria-label="Previous month">‹</button>
+            <h3 id="month-title"></h3>
+            <button class="month-nav-button" id="month-next" type="button" aria-label="Next month">›</button>
+          </div>
+          <div class="month-weekdays" aria-hidden="true">
+            <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+          </div>
+          <div class="month-days-grid" id="month-days-grid" role="grid" aria-label="Mood calendar"></div>
+          <div class="month-legend" id="month-legend" role="list" aria-label="Mood color legend"></div>
+        </div>
       </div>
     </section>
 

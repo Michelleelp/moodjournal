@@ -23,8 +23,8 @@ function renderNavbar() {
         <span aria-hidden="true">☰</span>
       </button>
       <div class="nav-links" id="main-menu">
-        <a class="nav-link${journalCurrent ? " is-current" : ""}" href="app.html"${journalCurrent ? ' aria-current="page"' : ""}>Journal</a>
-        <a class="nav-link${contactCurrent ? " is-current" : ""}" href="contact.html"${contactCurrent ? ' aria-current="page"' : ""}>Contact</a>
+        <a class="nav-link nav-tab nav-tab-journal${journalCurrent ? " is-current" : ""}" href="app.html"${journalCurrent ? ' aria-current="page"' : ""}>Journal</a>
+        <a class="nav-link nav-tab nav-tab-contact${contactCurrent ? " is-current" : ""}" href="contact.html"${contactCurrent ? ' aria-current="page"' : ""}>Contact</a>
         <div class="nav-account-actions">${accountActions}</div>
       </div>
     </nav>
