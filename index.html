@@ -11,17 +11,24 @@
   <link rel="stylesheet" href="style.css">
   <script src="index.js" defer></script>
 </head>
-<body class="auth-page">
-  <!-- Authentication page heading and welcome copy -->
-  <main class="auth-shell">
-    <a class="brand auth-brand" href="index.html" aria-label="MoodJournal home">
-      <span class="brand-mark" aria-hidden="true">🌸</span>
-      <span>MoodJournal</span>
-    </a>
-    <section class="auth-card" aria-labelledby="welcome-title">
+<body class="welcome-page">
+  <!-- Welcome page with immediate guest access -->
+  <main class="welcome-shell">
+    <a class="brand auth-brand" href="index.html" aria-label="MoodJournal home">MoodJournal</a>
+    <section class="welcome-hero surface-card" aria-labelledby="welcome-title">
+      <div class="hero-emoji" aria-hidden="true">🌈 💜 🌷</div>
       <div class="section-eyebrow">A little space just for you ✨</div>
       <h1 id="welcome-title">Your feelings matter.</h1>
-      <p class="muted-copy">Take a moment to check in with yourself.</p>
+      <p class="muted-copy">Pause, write what’s on your mind, and make room for every feeling. Your journal is ready whenever you are.</p>
+      <a class="button button-primary start-button" href="app.html">Start journaling <span aria-hidden="true">→</span></a>
+      <p class="guest-note">No account needed to get started 💜</p>
+    </section>
+
+    <!-- Optional login and sign-up forms for users who want to save history -->
+    <section class="auth-card optional-auth-card" id="account" aria-labelledby="account-title">
+      <div class="section-eyebrow">Keep your moments together</div>
+      <h2 id="account-title">Want to save your history?</h2>
+      <p class="muted-copy">Log in or sign up to save your journal entries.</p>
 
       <!-- Login and sign-up tabs -->
       <div class="tab-list" role="tablist" aria-label="Account options">
@@ -54,5 +61,7 @@
       <p class="privacy-note">A gentle reminder: it’s okay to feel it all. 💜</p>
     </section>
   </main>
+  <!-- Shared decorative effects are disabled when reduced motion is preferred -->
+  <script src="effects.js" defer></script>
 </body>
 </html>

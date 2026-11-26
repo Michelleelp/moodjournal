@@ -10,22 +10,21 @@
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <script src="contact.js" defer></script>
+  <script src="effects.js" defer></script>
 </head>
 <body>
   <!-- Shared navigation -->
   <header class="site-header">
     <nav class="navbar page-width" aria-label="Main navigation">
       <a class="brand" href="app.html">
-        <span class="brand-mark" aria-hidden="true">
-          <img src="assets/logo.png" alt="" onerror="this.hidden=true">
-          <span>🌸</span>
-        </span>
+        <img class="brand-logo" src="assets/logo.png" alt="" hidden>
         <span>MoodJournal</span>
       </a>
       <div class="nav-links">
         <a class="nav-link" href="app.html">Journal</a>
         <a class="nav-link is-current" href="contact.html" aria-current="page">Contact</a>
-        <a class="button button-outline button-small" href="index.html">Logout</a>
+        <a class="button button-outline button-small" id="nav-login" href="index.html#account" hidden>Login</a>
+        <a class="button button-outline button-small" id="nav-logout" href="index.html" hidden>Logout</a>
       </div>
     </nav>
   </header>

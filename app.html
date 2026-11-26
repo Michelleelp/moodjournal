@@ -10,22 +10,21 @@
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <script src="app.js" defer></script>
+  <script src="effects.js" defer></script>
 </head>
 <body>
   <!-- Shared navigation -->
   <header class="site-header">
     <nav class="navbar page-width" aria-label="Main navigation">
       <a class="brand" href="app.html">
-        <span class="brand-mark" aria-hidden="true">
-          <img src="assets/logo.png" alt="" onerror="this.hidden=true">
-          <span>🌸</span>
-        </span>
+        <img class="brand-logo" src="assets/logo.png" alt="" hidden>
         <span>MoodJournal</span>
       </a>
       <div class="nav-links">
         <a class="nav-link is-current" href="app.html" aria-current="page">Journal</a>
         <a class="nav-link" href="contact.html">Contact</a>
-        <a class="button button-outline button-small" href="index.html">Logout</a>
+        <a class="button button-outline button-small" id="nav-login" href="index.html#account" hidden>Login</a>
+        <a class="button button-outline button-small" id="nav-logout" href="index.html" hidden>Logout</a>
       </div>
     </nav>
   </header>
@@ -66,7 +65,12 @@
         </div>
         <span class="entry-count" id="entry-count"></span>
       </div>
-      <div class="entries-list" id="entries-list"></div>
+      <div class="guest-entry-prompt surface-card" id="guest-entry-prompt" hidden>
+        <span class="guest-prompt-emoji" aria-hidden="true">💜</span>
+        <p>Log in to save and see your past entries 💜</p>
+        <a class="button button-primary button-small" href="index.html#account">Login</a>
+      </div>
+      <div class="entries-list" id="entries-list" hidden></div>
     </section>
   </main>
   <footer class="site-footer">Made with care, for all your feels 💜</footer>
