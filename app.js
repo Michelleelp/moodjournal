@@ -111,36 +111,57 @@ function showMood(moodName) {
   }
 }
 
-// Keep keyword matching local while routing all results through showMood().
-const moodKeywords = [
-  { terms: ["happy", "great", "joy", "excited", "good", "grateful", "love"], mood: "joy" },
-  { terms: ["sad", "down", "lonely", "cry", "hard", "tired", "disappointed"], mood: "sadness" },
-  { terms: ["angry", "frustrated", "annoyed", "upset", "mad"], mood: "anger" },
-  { terms: ["anxious", "worried", "stress", "scared", "afraid", "nervous"], mood: "fear" },
-  { terms: ["surprised", "unexpected", "shocked", "amazed"], mood: "surprise" },
-  { terms: ["disgusted", "gross", "repulsed", "nauseated"], mood: "disgust" }
-];
-
 const analyzeButton = document.querySelector("#analyze-button");
+const analyzeButtonLabel = document.querySelector("#analyze-button-label");
+const analyzeButtonIcon = document.querySelector("#analyze-button-icon");
 const journalText = document.querySelector("#journal-text");
 const journalMessage = document.querySelector("#journal-message");
 
-analyzeButton.addEventListener("click", () => {
+// TEMPORARY - replace with Hugging Face emotion model later
+async function analyzeMood(text) {
+  const normalizedText = text.toLowerCase();
+  const keywordsByMood = {
+    joy: ["happy", "great", "good", "excited", "love", "amazing", "glad", "proud", "fun"],
+    sadness: ["sad", "cry", "lonely", "down", "hurt", "miss", "depressed", "tired of", "rain"],
+    anger: ["angry", "mad", "hate", "furious", "annoyed", "upset", "frustrated"],
+    fear: ["scared", "afraid", "anxious", "nervous", "worried", "panic", "stress"],
+    surprise: ["surprised", "shocked", "wow", "unexpected", "suddenly"],
+    disgust: ["disgusting", "gross", "nasty", "sick of", "awful"]
+  };
+
+  for (const [mood, keywords] of Object.entries(keywordsByMood)) {
+    if (keywords.some((keyword) => normalizedText.includes(keyword))) {
+      return mood;
+    }
+  }
+
+  return "neutral";
+}
+
+// Validate the entry, show a brief loading state, and render its mood result.
+analyzeButton.addEventListener("click", async () => {
   const entry = journalText.value.trim();
   if (!entry) {
-    journalMessage.textContent = "Write a little about how you’re feeling first. 💜";
+    journalMessage.textContent = "Write a few words first 💜";
+    journalMessage.hidden = false;
     journalText.focus();
     return;
   }
 
-  const normalizedText = entry.toLowerCase();
-  const matchedMood = moodKeywords.find((item) => item.terms.some((term) => normalizedText.includes(term)));
-  showMood(matchedMood ? matchedMood.mood : "neutral");
   journalMessage.textContent = "";
-  moodResult.scrollIntoView({ behavior: "smooth", block: "nearest" });
-});
+  journalMessage.hidden = true;
+  analyzeButton.disabled = true;
+  analyzeButtonLabel.textContent = "Analyzing... ✨";
+  analyzeButtonIcon.hidden = true;
 
-// Temporary mood buttons make every card appearance available for preview.
-document.querySelectorAll("[data-mood-preview]").forEach((button) => {
-  button.addEventListener("click", () => showMood(button.dataset.moodPreview));
+  try {
+    const mood = await analyzeMood(entry);
+    await new Promise((resolve) => window.setTimeout(resolve, 1000));
+    showMood(mood);
+    moodResult.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  } finally {
+    analyzeButton.disabled = false;
+    analyzeButtonLabel.textContent = "Analyze my mood";
+    analyzeButtonIcon.hidden = false;
+  }
 });

@@ -49,3 +49,49 @@ Add comments in the code explaining each part.
    - appear with a gentle fade and slide-up animation.
    Keep the text readable on every gradient.
 
+4.
+Update app.html and app.js in the MoodJournal project. Do NOT add Firebase or Hugging Face yet.
+
+1. Remove the 7 temporary emoji test buttons under the result card (the ones marked "TEMPORARY").
+
+2. Make the "Analyze my mood" button work. When clicked, it must read the text from the textarea and call a function analyzeMood(text) that returns one of: joy, sadness, anger, fear, surprise, disgust, neutral. Then call the existing showMood(moodName) function with the result.
+
+3. For now, analyzeMood(text) must be a TEMPORARY keyword-based version: convert the text to lowercase and look for keywords.
+   - joy: happy, great, good, excited, love, amazing, glad, proud, fun
+   - sadness: sad, cry, lonely, down, hurt, miss, depressed, tired of, rain
+   - anger: angry, mad, hate, furious, annoyed, upset, frustrated
+   - fear: scared, afraid, anxious, nervous, worried, panic, stress
+   - surprise: surprised, shocked, wow, unexpected, suddenly
+   - disgust: disgusting, gross, nasty, sick of, awful
+   - neutral: if no keyword matches.
+   Add a comment: "TEMPORARY - replace with Hugging Face emotion model later". Keep analyzeMood as a separate async function so it can be replaced easily.
+
+4.
+
+
+-----------------------------
+
+
+
+
+4.
+Update app.html and app.js in the MoodJournal project. Do NOT add Firebase or Hugging Face yet.
+
+1. Remove the 7 temporary emoji test buttons under the result card (the ones marked "TEMPORARY").
+
+2. Make the "Analyze my mood" button work. When clicked, it must read the text from the textarea and call a function analyzeMood(text) that returns one of: joy, sadness, anger, fear, surprise, disgust, neutral. Then call the existing showMood(moodName) function with the result.
+
+3. For now, analyzeMood(text) must be a TEMPORARY keyword-based version: convert the text to lowercase and look for keywords.
+   - joy: happy, great, good, excited, love, amazing, glad, proud, fun
+   - sadness: sad, cry, lonely, down, hurt, miss, depressed, tired of, rain
+   - anger: angry, mad, hate, furious, annoyed, upset, frustrated
+   - fear: scared, afraid, anxious, nervous, worried, panic, stress
+   - surprise: surprised, shocked, wow, unexpected, suddenly
+   - disgust: disgusting, gross, nasty, sick of, awful
+   - neutral: if no keyword matches.
+   Add a comment: "TEMPORARY - replace with Hugging Face emotion model later". Keep analyzeMood as a separate async function so it can be replaced easily.
+
+4. If the textarea is empty, do not analyze; show a friendly message under the textarea: "Write a few words first 💜".
+
+5. While analyzing, show a short loading state on the button ("Analyzing... ✨") for about 1 second, then show the result card with its fade and slide-up animation.
+
