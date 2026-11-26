@@ -19,15 +19,67 @@
   <header id="navbar" class="site-header"></header>
 
   <main class="page-width journal-page">
-    <!-- Daily mood check-in form -->
+    <!-- Daily mood check-in and paper notebook entry -->
     <section class="journal-intro">
       <div class="section-eyebrow">Your daily check-in 🌷</div>
       <h1>How are you feeling?</h1>
       <p class="muted-copy">There’s no right or wrong answer. Just be you.</p>
     </section>
     <section class="journal-composer surface-card" aria-labelledby="entry-title">
-      <label class="sr-only" for="journal-text">How are you feeling today?</label>
-      <textarea id="journal-text" rows="5" placeholder="How are you feeling today? Write whatever is on your mind..."></textarea>
+      <!-- Date marker at the top of today's notebook page. -->
+      <h2 class="today-label" id="entry-title">TODAY</h2>
+
+      <!-- A single-select scale for how the writer feels arriving at the page. -->
+      <section class="paper-section" aria-labelledby="arriving-title">
+        <h3 class="paper-section-title" id="arriving-title">How I'm arriving today</h3>
+        <div class="arriving-mood-options" role="group" aria-label="Choose how you are arriving today">
+          <button class="arriving-mood-button" type="button" data-arriving-mood="1" data-tooltip="Very low" aria-label="1, very low" aria-pressed="false">😢</button>
+          <button class="arriving-mood-button" type="button" data-arriving-mood="2" data-tooltip="A little low" aria-label="2, a little low" aria-pressed="false">😕</button>
+          <button class="arriving-mood-button" type="button" data-arriving-mood="3" data-tooltip="In the middle" aria-label="3, in the middle" aria-pressed="false">😐</button>
+          <button class="arriving-mood-button" type="button" data-arriving-mood="4" data-tooltip="Pretty good" aria-label="4, pretty good" aria-pressed="false">🙂</button>
+          <button class="arriving-mood-button" type="button" data-arriving-mood="5" data-tooltip="Feeling great" aria-label="5, feeling great" aria-pressed="false">😄</button>
+        </div>
+      </section>
+
+      <!-- Optional thought prompts, each with a completion checkbox and notebook-line input. -->
+      <section class="paper-section" aria-labelledby="topics-title">
+        <h3 class="paper-section-title" id="topics-title">Things I want to write about</h3>
+        <div class="topic-list">
+          <div class="topic-row">
+            <label class="topic-check"><input class="topic-checkbox" type="checkbox" aria-label="Mark topic 1 complete"><span class="topic-checkbox-mark" aria-hidden="true"></span></label>
+            <input class="topic-input" type="text" aria-label="Topic 1" placeholder="Something on my mind...">
+          </div>
+          <div class="topic-row">
+            <label class="topic-check"><input class="topic-checkbox" type="checkbox" aria-label="Mark topic 2 complete"><span class="topic-checkbox-mark" aria-hidden="true"></span></label>
+            <input class="topic-input" type="text" aria-label="Topic 2" placeholder="A moment I want to remember...">
+          </div>
+          <div class="topic-row">
+            <label class="topic-check"><input class="topic-checkbox" type="checkbox" aria-label="Mark topic 3 complete"><span class="topic-checkbox-mark" aria-hidden="true"></span></label>
+            <input class="topic-input" type="text" aria-label="Topic 3" placeholder="Something that felt challenging...">
+          </div>
+          <div class="topic-row">
+            <label class="topic-check"><input class="topic-checkbox" type="checkbox" aria-label="Mark topic 4 complete"><span class="topic-checkbox-mark" aria-hidden="true"></span></label>
+            <input class="topic-input" type="text" aria-label="Topic 4" placeholder="Someone I'm thinking about...">
+          </div>
+          <div class="topic-row">
+            <label class="topic-check"><input class="topic-checkbox" type="checkbox" aria-label="Mark topic 5 complete"><span class="topic-checkbox-mark" aria-hidden="true"></span></label>
+            <input class="topic-input" type="text" aria-label="Topic 5" placeholder="One thing I need...">
+          </div>
+        </div>
+      </section>
+
+      <!-- Main journal text sits on a soft lined-paper background. -->
+      <section class="paper-section" aria-labelledby="journal-text-label">
+        <label class="paper-section-title" id="journal-text-label" for="journal-text">How are you feeling today?</label>
+        <textarea class="journal-textarea" id="journal-text" rows="5" placeholder="Write whatever is on your mind..."></textarea>
+      </section>
+
+      <!-- One optional question to carry into reflection. -->
+      <section class="paper-section question-section" aria-labelledby="question-title">
+        <label class="paper-section-title" id="question-title" for="reflection-question">A question for myself</label>
+        <input class="notebook-line-input" id="reflection-question" type="text" placeholder="Write a question you want to think about...">
+      </section>
+
       <p class="form-message" id="journal-message" role="status" aria-live="polite" hidden></p>
       <div class="composer-footer">
         <span class="helper-copy">A few words can make a big difference 💜</span>

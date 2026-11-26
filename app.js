@@ -119,6 +119,29 @@ const analyzeButtonLabel = document.querySelector("#analyze-button-label");
 const analyzeButtonIcon = document.querySelector("#analyze-button-icon");
 const journalText = document.querySelector("#journal-text");
 const journalMessage = document.querySelector("#journal-message");
+const topicInputs = document.querySelectorAll(".topic-input");
+const reflectionQuestion = document.querySelector("#reflection-question");
+
+// Keep one optional arrival rating selected for this journal page.
+let arrivingMood = null;
+document.querySelectorAll(".arriving-mood-button").forEach((button) => {
+  button.addEventListener("click", () => {
+    arrivingMood = Number(button.dataset.arrivingMood);
+    document.querySelectorAll(".arriving-mood-button").forEach((moodButton) => {
+      const isSelected = moodButton === button;
+      moodButton.classList.toggle("is-selected", isSelected);
+      moodButton.setAttribute("aria-pressed", String(isSelected));
+    });
+  });
+});
+
+// Mark checked prompts as complete so their writing is visibly crossed out.
+document.querySelectorAll(".topic-row").forEach((row) => {
+  const checkbox = row.querySelector(".topic-checkbox");
+  checkbox.addEventListener("change", () => {
+    row.classList.toggle("is-complete", checkbox.checked);
+  });
+});
 
 // TEMPORARY - replace with Hugging Face emotion model later
 async function analyzeMood(text) {
@@ -143,7 +166,13 @@ async function analyzeMood(text) {
 
 // Validate the entry, show a brief loading state, and render its mood result.
 analyzeButton.addEventListener("click", async () => {
-  const entry = journalText.value.trim();
+  // Combine every written part of the page without adding empty fields.
+  const entry = [
+    journalText.value,
+    ...Array.from(topicInputs, (input) => input.value),
+    reflectionQuestion.value
+  ].map((text) => text.trim()).filter(Boolean).join(" ");
+
   if (!entry) {
     journalMessage.textContent = "Write a few words first 💜";
     journalMessage.hidden = false;

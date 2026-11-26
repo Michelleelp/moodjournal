@@ -144,3 +144,29 @@ Restyle the "Login" and "Sign Up" buttons in the navbar so they look exactly lik
 They must still open the auth modal (Login tab and Sign Up tab) when clicked. When isLoggedIn is true, the "Logout" button must use the same tab style too. Keep the layout responsive, and keep the navbar visible above the emoji rain.
 
 Add comments in the code explaining the change.
+
+
+--------------------------------
+
+
+
+
+7. Update app.html, app.js and style.css in the MoodJournal project. Keep the soft purple and white cute style, all text in English. Do NOT add Firebase or Hugging Face yet.
+
+Redesign the journal entry card (the one with the textarea and the "Analyze my mood" button) to look like a page from a paper notebook. Keep the existing result card, month tracker and past entries below it.
+
+1. Top of the card: a small pill-shaped label that says "TODAY" (soft purple background, rounded, uppercase small text).
+
+2. "How I'm arriving today": a row of 5 circular buttons, a mood scale from 1 to 5, each with an emoji (1: 😢, 2: 😕, 3: 😐, 4: 🙂, 5: 😄) and a small tooltip or label on hover. Only one can be selected at a time; the selected one gets a purple border, a soft fill and a small scale-up. Store the selected value in a variable called arrivingMood (null if none).
+
+3. "Things I want to write about": a checklist of 5 rows. Each row has a round or square checkbox on the left and a text input on the right styled as a thin line (only a bottom border, like a notebook line). Checking a box visually strikes through the text.
+
+4. Main writing area: keep the textarea (label "How are you feeling today?") but style it as lined paper: a soft cream-lavender background with thin horizontal lines (use repeating-linear-gradient with a line height that matches the textarea line-height), no visible box border, and a soft left margin line.
+
+5. "A question for myself": a single input styled as a notebook line, placeholder "Write a question you want to think about..."
+
+6. Keep the "Analyze my mood" button at the bottom of the card. When clicked, build ONE combined string with: the main text + the text of every topic row that is not empty + the question, separated by spaces, and pass it to the existing analyzeMood(text) function. If all those fields are empty, show the friendly message "Write a few words first 💜" like before. Do not change analyzeMood itself.
+
+7. Make the card responsive (the 5 circles and the checklist must look good on mobile) and keep the heartbeat result animation working.
+
+Add comments in the code explaining each part.
