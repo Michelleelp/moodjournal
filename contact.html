@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f6f1ff">
+  <title>Contact | MoodJournal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="contact.js" defer></script>
+</head>
+<body>
+  <!-- Shared navigation -->
+  <header class="site-header">
+    <nav class="navbar page-width" aria-label="Main navigation">
+      <a class="brand" href="app.html">
+        <span class="brand-mark" aria-hidden="true">
+          <img src="assets/logo.png" alt="" onerror="this.hidden=true">
+          <span>🌸</span>
+        </span>
+        <span>MoodJournal</span>
+      </a>
+      <div class="nav-links">
+        <a class="nav-link" href="app.html">Journal</a>
+        <a class="nav-link is-current" href="contact.html" aria-current="page">Contact</a>
+        <a class="button button-outline button-small" href="index.html">Logout</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Contact form and local-only submission confirmation -->
+  <main class="page-width contact-page">
+    <section class="contact-card surface-card">
+      <div class="contact-decoration" aria-hidden="true">💌</div>
+      <div class="section-eyebrow">We’re here to listen</div>
+      <h1>Say hello</h1>
+      <p class="muted-copy">Questions, ideas, or just a kind thought? We’d love to hear from you.</p>
+      <form class="contact-form" id="contact-form">
+        <label for="contact-name">Name</label>
+        <input id="contact-name" name="name" type="text" placeholder="Your name" autocomplete="name" required>
+        <label for="contact-email">Email</label>
+        <input id="contact-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required>
+        <label for="contact-message">Message</label>
+        <textarea id="contact-message" name="message" rows="5" placeholder="Write us a little note..." required></textarea>
+        <button class="button button-primary button-full" type="submit">Send <span aria-hidden="true">💌</span></button>
+      </form>
+      <p class="thank-you-message" id="thank-you" role="status" aria-live="polite" hidden>Thank you for reaching out! Your message is ready for us (this demo doesn’t send it anywhere yet). 💜</p>
+    </section>
+  </main>
+  <footer class="site-footer">Made with care, for all your feels 💜</footer>
+</body>
+</html>

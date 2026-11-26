@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f6f1ff">
+  <title>Your Journal | MoodJournal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <!-- Shared navigation -->
+  <header class="site-header">
+    <nav class="navbar page-width" aria-label="Main navigation">
+      <a class="brand" href="app.html">
+        <span class="brand-mark" aria-hidden="true">
+          <img src="assets/logo.png" alt="" onerror="this.hidden=true">
+          <span>🌸</span>
+        </span>
+        <span>MoodJournal</span>
+      </a>
+      <div class="nav-links">
+        <a class="nav-link is-current" href="app.html" aria-current="page">Journal</a>
+        <a class="nav-link" href="contact.html">Contact</a>
+        <a class="button button-outline button-small" href="index.html">Logout</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="page-width journal-page">
+    <!-- Daily mood check-in form -->
+    <section class="journal-intro">
+      <div class="section-eyebrow">Your daily check-in 🌷</div>
+      <h1>How are you feeling?</h1>
+      <p class="muted-copy">There’s no right or wrong answer. Just be you.</p>
+    </section>
+    <section class="journal-composer surface-card" aria-labelledby="entry-title">
+      <label class="sr-only" for="journal-text">How are you feeling today?</label>
+      <textarea id="journal-text" rows="5" placeholder="How are you feeling today? Write whatever is on your mind..."></textarea>
+      <div class="composer-footer">
+        <span class="helper-copy">A few words can make a big difference 💜</span>
+        <button class="button button-primary" id="analyze-button" type="button">Analyze my mood <span aria-hidden="true">✨</span></button>
+      </div>
+      <p class="form-message" id="journal-message" role="status" aria-live="polite"></p>
+    </section>
+
+    <!-- Mood result, revealed after local demo analysis -->
+    <section class="result-card surface-card" id="mood-result" aria-live="polite" hidden>
+      <div class="result-emoji" id="result-emoji" aria-hidden="true">😊</div>
+      <div>
+        <div class="section-eyebrow">Your mood check-in</div>
+        <h2 id="result-mood">Feeling hopeful</h2>
+        <p id="result-message" class="muted-copy"></p>
+      </div>
+    </section>
+
+    <!-- Past journal entries are populated by app.js -->
+    <section class="entries-section" aria-labelledby="entries-title">
+      <div class="section-heading">
+        <div>
+          <div class="section-eyebrow">Little moments, remembered</div>
+          <h2 id="entries-title">My past entries</h2>
+        </div>
+        <span class="entry-count" id="entry-count"></span>
+      </div>
+      <div class="entries-list" id="entries-list"></div>
+    </section>
+  </main>
+  <footer class="site-footer">Made with care, for all your feels 💜</footer>
+</body>
+</html>
