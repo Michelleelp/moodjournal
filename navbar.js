@@ -1,5 +1,9 @@
-// Shared authentication state is guest-only until a real login service is added.
+// Firebase updates these shared values when the current account state is restored.
 var isLoggedIn = false;
+var currentUser = null;
+let authService = null;
+let authServiceFailed = false;
+let authToastTimer = null;
 
 const navbarHost = document.querySelector("#navbar");
 const currentPage = window.location.pathname.split("/").pop().toLowerCase() || "index.html";
@@ -8,9 +12,9 @@ const currentPage = window.location.pathname.split("/").pop().toLowerCase() || "
 function renderNavbar() {
   const journalCurrent = currentPage === "app.html";
   const contactCurrent = currentPage === "contact.html";
-  // Keep only Sign Up for guests and use Logout for logged-in previews.
+  // Guests can open Sign Up; authenticated users see their email and Logout.
   const accountActions = isLoggedIn
-    ? '<button class="nav-link nav-tab nav-tab-logout" id="nav-logout" type="button">Logout</button>'
+    ? `<span class="nav-user-email" id="nav-user-email"></span><button class="nav-link nav-tab nav-tab-logout" id="nav-logout" type="button">Logout</button>`
     : '<button class="nav-link nav-tab nav-tab-signup" type="button" data-open-auth="signup">Sign Up</button>';
 
   navbarHost.innerHTML = `
@@ -38,6 +42,11 @@ function renderNavbar() {
     brandLogo.remove();
   }
 
+  const emailLabel = navbarHost.querySelector("#nav-user-email");
+  if (emailLabel) {
+    emailLabel.textContent = currentUser && currentUser.email ? currentUser.email : "Signed in";
+  }
+
   const menuToggle = document.querySelector("#menu-toggle");
   const navLinks = document.querySelector("#main-menu");
   menuToggle.addEventListener("click", () => {
@@ -51,10 +60,17 @@ function renderNavbar() {
 
   const logoutButton = document.querySelector("#nav-logout");
   if (logoutButton) {
-    logoutButton.addEventListener("click", () => {
-      isLoggedIn = false;
-      renderNavbar();
-      document.dispatchEvent(new CustomEvent("moodjournal:auth-change"));
+    logoutButton.addEventListener("click", async () => {
+      if (!authService) {
+        showAuthToast("Account services are unavailable right now. Please try again.");
+        return;
+      }
+      try {
+        await authService.logOut();
+      } catch (error) {
+        console.error("[MoodJournal] Could not log out.", error);
+        showAuthToast("We couldn’t log you out. Please try again.");
+      }
     });
   }
 }
@@ -75,23 +91,23 @@ document.body.insertAdjacentHTML("beforeend", `
       </div>
 
       <!-- Shared login form -->
-      <form class="auth-form" id="login-panel" role="tabpanel" aria-labelledby="login-tab">
+      <form class="auth-form" id="login-panel" role="tabpanel" aria-labelledby="login-tab" novalidate>
         <label for="login-email">Email</label>
         <input id="login-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required>
         <label for="login-password">Password</label>
         <input id="login-password" name="password" type="password" placeholder="Your password" autocomplete="current-password" required>
-        <button class="button button-primary button-full" type="submit">Login <span aria-hidden="true">→</span></button>
+        <button class="button button-primary button-full" type="submit"><span class="auth-submit-label">Login</span> <span aria-hidden="true">→</span></button>
       </form>
 
       <!-- Shared sign-up form -->
-      <form class="auth-form" id="signup-panel" role="tabpanel" aria-labelledby="signup-tab" hidden>
+      <form class="auth-form" id="signup-panel" role="tabpanel" aria-labelledby="signup-tab" novalidate hidden>
         <label for="signup-email">Email</label>
         <input id="signup-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required>
         <label for="signup-password">Password</label>
         <input id="signup-password" name="password" type="password" placeholder="Create a password" autocomplete="new-password" required>
         <label for="confirm-password">Confirm password</label>
         <input id="confirm-password" name="confirm-password" type="password" placeholder="Type it one more time" autocomplete="new-password" required>
-        <button class="button button-primary button-full" type="submit">Create account <span aria-hidden="true">→</span></button>
+        <button class="button button-primary button-full" type="submit"><span class="auth-submit-label">Create account</span> <span aria-hidden="true">→</span></button>
       </form>
 
       <!-- Shared space for password and account feedback -->
@@ -99,17 +115,30 @@ document.body.insertAdjacentHTML("beforeend", `
       <p class="privacy-note">A gentle reminder: it’s okay to feel it all. 💜</p>
     </section>
   </div>
+  <div class="auth-toast" id="auth-toast" role="status" aria-live="polite" hidden></div>
 `);
 
 const authModal = document.querySelector("#auth-modal");
 const authModalPanel = document.querySelector(".auth-modal-panel");
 const authMessage = document.querySelector("#auth-message");
+const authToast = document.querySelector("#auth-toast");
 const loginTab = document.querySelector("#login-tab");
 const signupTab = document.querySelector("#signup-tab");
 const loginPanel = document.querySelector("#login-panel");
 const signupPanel = document.querySelector("#signup-panel");
 let previouslyFocusedElement = null;
 let modalCloseTimer = null;
+
+// Show a short confirmation without interrupting the journal or contact page.
+function showAuthToast(message) {
+  authToast.textContent = message;
+  authToast.hidden = false;
+  window.clearTimeout(authToastTimer);
+  authToastTimer = window.setTimeout(() => {
+    authToast.hidden = true;
+    authToast.textContent = "";
+  }, 3200);
+}
 
 // Switch the visible modal form and update its accessible tab state.
 function showAuthPanel(tabName) {
@@ -160,6 +189,11 @@ function closeAuthModal() {
 }
 
 renderNavbar();
+document.addEventListener("moodjournal:auth-change", () => {
+  isLoggedIn = Boolean(window.isLoggedIn);
+  currentUser = window.currentUser || null;
+  renderNavbar();
+});
 document.addEventListener("click", (event) => {
   const authButton = event.target.closest("[data-open-auth]");
   if (!authButton) {
@@ -189,14 +223,77 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-// Keep authentication forms frontend-only and validate sign-up confirmation.
+// Translate known Firebase errors into simple, helpful messages without exposing SDK details.
+function friendlyAuthError(error) {
+  const messages = {
+    "auth/email-already-in-use": "An account with this email already exists. Try logging in instead.",
+    "auth/invalid-email": "Please enter a valid email address.",
+    "auth/weak-password": "Please choose a password with at least 6 characters.",
+    "auth/invalid-credential": "That email or password doesn’t look right. Please try again.",
+    "auth/user-not-found": "We couldn’t find an account with that email.",
+    "auth/wrong-password": "That email or password doesn’t look right. Please try again.",
+    "auth/too-many-requests": "Too many attempts. Please wait a little while and try again.",
+    "auth/network-request-failed": "We couldn’t connect. Check your internet connection and try again."
+  };
+  return messages[error && error.code] || "We couldn’t complete that request. Please try again.";
+}
+
+// Validate inputs locally, then call Firebase without logging or persisting passwords.
 [loginPanel, signupPanel].forEach((form) => {
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    if (form === signupPanel && form.elements.password.value !== form.elements["confirm-password"].value) {
+
+    const email = form.elements.email.value.trim();
+    const password = form.elements.password.value;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      authMessage.textContent = "Please enter a valid email address.";
+      return;
+    }
+    if (password.length < 6) {
+      authMessage.textContent = "Please choose a password with at least 6 characters.";
+      return;
+    }
+    if (form === signupPanel && password !== form.elements["confirm-password"].value) {
       authMessage.textContent = "Those passwords don’t match yet. Please check and try again.";
       return;
     }
-    authMessage.textContent = "Account sign-in isn’t connected in this preview. You can keep journaling as a guest. 💜";
+    if (!authService) {
+      authMessage.textContent = authServiceFailed
+        ? "Account services are unavailable right now. You can keep journaling as a guest."
+        : "Account services are connecting. Please try again in a moment.";
+      return;
+    }
+
+    const submitButton = form.querySelector('button[type="submit"]');
+    const submitLabel = submitButton.querySelector(".auth-submit-label");
+    const originalLabel = form === signupPanel ? "Create account" : "Login";
+    submitButton.disabled = true;
+    submitLabel.textContent = "Please wait... ✨";
+    authMessage.textContent = "";
+
+    try {
+      if (form === signupPanel) {
+        await authService.signUp(email, password);
+      } else {
+        await authService.logIn(email, password);
+      }
+
+      form.reset();
+      closeAuthModal();
+      showAuthToast("Welcome to MoodJournal 💜");
+    } catch (error) {
+      authMessage.textContent = friendlyAuthError(error);
+    } finally {
+      submitButton.disabled = false;
+      submitLabel.textContent = originalLabel;
+    }
   });
+});
+
+// Load auth support asynchronously so Firebase network issues never block guest journaling.
+import("./auth.js").then((module) => {
+  authService = module;
+}).catch((error) => {
+  authServiceFailed = true;
+  console.error("[MoodJournal] Could not initialize Firebase authentication.", error);
 });

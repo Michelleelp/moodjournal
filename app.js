@@ -40,10 +40,11 @@ function renderEntries(entries) {
 
 // Show saved-entry previews only for logged-in users; guests see the login prompt.
 function updateEntryAccess() {
-  guestEntryPrompt.hidden = isLoggedIn;
-  entriesList.hidden = !isLoggedIn;
-  entryCount.hidden = !isLoggedIn;
-  if (isLoggedIn) {
+  const loggedIn = Boolean(window.isLoggedIn);
+  guestEntryPrompt.hidden = loggedIn;
+  entriesList.hidden = !loggedIn;
+  entryCount.hidden = !loggedIn;
+  if (loggedIn) {
     renderEntries(exampleEntries);
   } else {
     entriesList.replaceChildren();
