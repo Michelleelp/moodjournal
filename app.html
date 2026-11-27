@@ -16,7 +16,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <script src="navbar.js" defer></script>
-  <script src="app.js" defer></script>
+  <script type="module" src="app.js"></script>
   <script src="month.js" defer></script>
   <script src="effects.js" defer></script>
 </head>
@@ -94,6 +94,10 @@
         </button>
       </div>
     </section>
+
+    <!-- Background model loading and keyword-fallback status appear below the entry card. -->
+    <p class="ai-status" id="ai-status" role="status" aria-live="polite">Waking up the AI, the first time can take a moment 💜</p>
+    <p class="ai-status analysis-fallback-note" id="analysis-fallback-note" role="status" aria-live="polite" hidden>Analyzed with the keyword helper</p>
 
     <!-- Mood result updates to a supportive, mood-specific color and message -->
     <section class="result-card surface-card" id="mood-result" data-mood="neutral" aria-live="polite" hidden>

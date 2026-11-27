@@ -19,9 +19,9 @@ function renderNavbar() {
         <img class="brand-logo" src="assets/logo.png" alt="MoodJournal logo">
         <span>MoodJournal</span>
       </a>
-      <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="main-menu">
+      <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="main-menu">
         <span class="menu-toggle-label">Menu</span>
-        <span aria-hidden="true">☰</span>
+        <span class="menu-toggle-icon" aria-hidden="true">☰</span>
       </button>
       <div class="nav-links" id="main-menu">
         <a class="nav-link nav-tab nav-tab-journal${journalCurrent ? " is-current" : ""}" href="app.html"${journalCurrent ? ' aria-current="page"' : ""}>Journal</a>
@@ -31,6 +31,13 @@ function renderNavbar() {
     </nav>
   `;
 
+  // Remove the logo element on failure, and handle an error that finished before binding.
+  const brandLogo = navbarHost.querySelector(".brand-logo");
+  brandLogo.addEventListener("error", () => brandLogo.remove(), { once: true });
+  if (brandLogo.complete && !brandLogo.naturalWidth) {
+    brandLogo.remove();
+  }
+
   const menuToggle = document.querySelector("#menu-toggle");
   const navLinks = document.querySelector("#main-menu");
   menuToggle.addEventListener("click", () => {
@@ -38,6 +45,8 @@ function renderNavbar() {
     navLinks.classList.toggle("is-open", menuIsOpen);
     menuToggle.setAttribute("aria-expanded", String(menuIsOpen));
     menuToggle.querySelector(".menu-toggle-label").textContent = menuIsOpen ? "Close" : "Menu";
+    menuToggle.setAttribute("aria-label", menuIsOpen ? "Close navigation menu" : "Open navigation menu");
+    menuToggle.querySelector(".menu-toggle-icon").textContent = menuIsOpen ? "×" : "☰";
   });
 
   const logoutButton = document.querySelector("#nav-logout");
@@ -162,6 +171,8 @@ document.addEventListener("click", (event) => {
   navLinks.classList.remove("is-open");
   menuToggle.setAttribute("aria-expanded", "false");
   menuToggle.querySelector(".menu-toggle-label").textContent = "Menu";
+  menuToggle.setAttribute("aria-label", "Open navigation menu");
+  menuToggle.querySelector(".menu-toggle-icon").textContent = "☰";
   openAuthModal(authButton.dataset.openAuth);
 });
 loginTab.addEventListener("click", () => showAuthPanel("login"));

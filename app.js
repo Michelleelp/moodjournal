@@ -1,3 +1,5 @@
+import { detectEmotion, loadEmotionModel } from "./huggingface.js";
+
 // Preview journal entries are kept in this file until storage is connected.
 const exampleEntries = [
   { date: "Today · 9:15 AM", text: "I got outside for a little walk and the sunshine felt so good.", mood: "😊" },
@@ -121,6 +123,8 @@ const journalText = document.querySelector("#journal-text");
 const journalMessage = document.querySelector("#journal-message");
 const topicInputs = document.querySelectorAll(".topic-input");
 const reflectionQuestion = document.querySelector("#reflection-question");
+const aiStatus = document.querySelector("#ai-status");
+const fallbackNote = document.querySelector("#analysis-fallback-note");
 
 // Keep one optional arrival rating selected for this journal page.
 let arrivingMood = null;
@@ -143,8 +147,8 @@ document.querySelectorAll(".topic-row").forEach((row) => {
   });
 });
 
-// TEMPORARY - replace with Hugging Face emotion model later
-async function analyzeMood(text) {
+// Keep local keyword matching available when the browser model cannot be used.
+function keywordFallback(text) {
   const normalizedText = text.toLowerCase();
   const keywordsByMood = {
     joy: ["happy", "great", "good", "excited", "love", "amazing", "glad", "proud", "fun"],
@@ -164,6 +168,52 @@ async function analyzeMood(text) {
   return "neutral";
 }
 
+let usedKeywordFallback = false;
+
+// Give the browser model up to 90 seconds before using the local keyword helper.
+async function analyzeMood(text) {
+  usedKeywordFallback = false;
+  let timeoutId;
+
+  try {
+    const detected = await Promise.race([
+      detectEmotion(text),
+      new Promise((_, reject) => {
+        timeoutId = window.setTimeout(
+          () => reject(new Error("Emotion model analysis timed out after 90 seconds.")),
+          90000
+        );
+      })
+    ]);
+
+    if (!detected || !Object.prototype.hasOwnProperty.call(moodDetails, detected.label)) {
+      throw new Error("Emotion model returned an unsupported mood label.");
+    }
+
+    return detected.label;
+  } catch (error) {
+    console.error("[MoodJournal] Emotion model analysis failed; using keyword helper.", error);
+    usedKeywordFallback = true;
+    return keywordFallback(text);
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
+}
+
+// Warm the cached model on page open so the first analysis can begin sooner.
+async function warmEmotionModel() {
+  aiStatus.hidden = false;
+  try {
+    await loadEmotionModel();
+    aiStatus.hidden = true;
+  } catch (error) {
+    console.error("[MoodJournal] Failed to load the emotion model in the background.", error);
+    aiStatus.textContent = "The AI could not load. You can still use the keyword helper.";
+  }
+}
+
+void warmEmotionModel();
+
 // Validate the combined card text, preserve the loading state, and render its mood result.
 analyzeButton.addEventListener("click", async () => {
   // Combine every written part of the page without adding empty fields.
@@ -182,6 +232,7 @@ analyzeButton.addEventListener("click", async () => {
 
   journalMessage.textContent = "";
   journalMessage.hidden = true;
+  fallbackNote.hidden = true;
   analyzeButton.disabled = true;
   analyzeButtonLabel.textContent = "Analyzing... ✨";
   analyzeButtonIcon.hidden = true;
@@ -190,7 +241,13 @@ analyzeButton.addEventListener("click", async () => {
     const mood = await analyzeMood(entry);
     await new Promise((resolve) => window.setTimeout(resolve, 1000));
     showMood(mood);
+    fallbackNote.hidden = !usedKeywordFallback;
+    aiStatus.hidden = true;
     moodResult.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  } catch (error) {
+    console.error("[MoodJournal] Could not display the mood analysis result.", error);
+    journalMessage.textContent = "Something went wrong while showing your result. Please try again.";
+    journalMessage.hidden = false;
   } finally {
     analyzeButton.disabled = false;
     analyzeButtonLabel.textContent = "Analyze my mood";

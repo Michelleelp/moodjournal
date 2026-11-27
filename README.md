@@ -213,3 +213,18 @@ Add comments in the code explaining each part.
 
 
 ----------------
+ HUGGING FACE 
+
+ Update app.js (and app.html if needed) in the MoodJournal project. Do NOT add Firebase yet.
+
+Connect the "Analyze my mood" button to a Hugging Face emotion model that runs directly in the browser using Transformers.js. No token, API key or server must be used anywhere.
+
+Model: MicahB/emotion_text_classifier (labels: anger, disgust, fear, joy, neutral, sadness, surprise).
+
+Requirements:
+1. Create a separate file huggingface.js (ES module) with an async function detectEmotion(text). Load the library from jsDelivr using @xenova/transformers@2.17.2, create the pipeline('text-classification', 'MicahB/emotion_text_classifier') only once and reuse it, and return the label with the highest score in lowercase plus the scores of all 7 labels.
+2. Update analyzeMood(text) so it first calls detectEmotion(text). If it fails or takes longer than 90 seconds, use the existing keyword logic as a fallback (keep it as a function called keywordFallback).
+3. The first time, the model downloads. Show the message "Waking up the AI, the first time can take a moment 💜" under the card, and start loading the model in the background when app.html opens.
+4. If the fallback was used, show a small note: "Analyzed with the keyword helper".
+5. Keep showMood(moodName), the gradients, the emoji animation and the month tracker working as before.
+6. Add try/catch with console.error messages and comments explaining each part.
