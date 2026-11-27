@@ -170,3 +170,42 @@ Redesign the journal entry card (the one with the textarea and the "Analyze my m
 7. Make the card responsive (the 5 circles and the checklist must look good on mobile) and keep the heartbeat result animation working.
 
 Add comments in the code explaining each part.
+
+
+
+
+----------------------
+
+
+8.Update the MoodJournal front-end (index.html, app.html, contact.html, style.css, navbar.js, effects.js). Keep the soft purple and white cute style, all text in English. Do NOT add Firebase or Hugging Face yet.
+
+1. Welcome page (index.html): remove the text "A little space just for you ✨" above the headline.
+
+2. Readability: the text across the whole site is too small. Increase the font size noticeably: raise the root font-size so the base body text is about 18px to 19px on desktop, labels and helper texts at least 15px (nothing smaller), buttons and inputs at least 17px, headings scaled proportionally, and the welcome headline bigger. Use rem units so everything scales together, and check that cards, forms, the month tracker and the emoji result still look balanced and responsive on desktop and mobile.
+
+3. Navbar: make it bigger. Increase the height and padding, make the "MoodJournal" text bigger and bolder, and make the tabs larger (font about 17px to 18px, more padding) while keeping the notebook divider tab style and colors.
+
+4. Remove the "Login" tab from the navbar. Keep "Sign Up" (it opens the auth modal, which still has the Login and Sign Up tabs inside). Keep the "Logout" tab for when isLoggedIn is true. The other "Login" buttons on the site must still open the auth modal.
+
+5. Logo spot: in the navbar, put an <img src="assets/logo.png" alt="MoodJournal logo"> (about 44px tall) to the left of the "MoodJournal" text, inside the same link that goes to index.html. If the image fails to load, hide it without leaving a broken icon.
+
+6. Emoji rain pause button (all pages): add a round, semi-transparent button (glass effect, soft purple border, blur background) fixed at the top-right corner of the screen, just below the navbar. It shows ⏸ when the rain is playing and ▶ when paused, with an aria-label and a tooltip ("Pause background animation" / "Play background animation"). Clicking it pauses or resumes the falling emojis (pause the CSS animations and stop creating new emojis). Save the choice in localStorage and apply it when any page loads. Put the logic in effects.js and inject the button from there so it appears on every page.
+
+7. Footer on all pages: replace "Made with care, for all your feels 💜" with "Made with 💜 by @Michelle Lozano and Codex" (make the text larger and easy to read).
+
+Add comments in the code explaining each part.
+
+
+
+-------------------
+9.Update app.html, app.js and style.css in the MoodJournal project. Keep the same style, all text in English. Do NOT add Firebase or Hugging Face yet.
+
+1. Remove the text "Your daily check-in 🌷" above the title "How are you feeling?".
+
+2. In the journal entry card, change the "How are you feeling today?" writing area: remove the horizontal lines (the lined paper background) and instead make it a clearly visible rectangular box: white background, a 2px soft purple border, rounded corners (about 14px), inner padding, a soft shadow, a minimum height of about 200px, and a stronger purple border with a gentle glow when focused. Keep the textarea label above it.
+
+3. Keep everything else in the card (TODAY label, mood scale, checklist, question line, Analyze button) working as before.
+
+4. Readability: make the labels, placeholders and typed text in this card larger and darker so they are easy to read (typed text about 18px to 19px, placeholders in a darker gray-purple with enough contrast, labels bold and larger). Also increase the text size and contrast in the result card, the "My month in colors" card and the "My past entries" section.
+
+Add comments in the code explaining each part.

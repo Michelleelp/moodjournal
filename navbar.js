@@ -8,15 +8,15 @@ const currentPage = window.location.pathname.split("/").pop().toLowerCase() || "
 function renderNavbar() {
   const journalCurrent = currentPage === "app.html";
   const contactCurrent = currentPage === "contact.html";
-  // Account actions use the same notebook-tab classes as the page links.
+  // Keep only Sign Up for guests and use Logout for logged-in previews.
   const accountActions = isLoggedIn
     ? '<button class="nav-link nav-tab nav-tab-logout" id="nav-logout" type="button">Logout</button>'
-    : '<button class="nav-link nav-tab nav-tab-login" type="button" data-open-auth="login">Login</button><button class="nav-link nav-tab nav-tab-signup" type="button" data-open-auth="signup">Sign Up</button>';
+    : '<button class="nav-link nav-tab nav-tab-signup" type="button" data-open-auth="signup">Sign Up</button>';
 
   navbarHost.innerHTML = `
     <nav class="navbar page-width" aria-label="Main navigation">
       <a class="brand" href="index.html" aria-label="MoodJournal home">
-        <img class="brand-logo" src="assets/logo.png" alt="" hidden>
+        <img class="brand-logo" src="assets/logo.png" alt="MoodJournal logo">
         <span>MoodJournal</span>
       </a>
       <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="main-menu">
