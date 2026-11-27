@@ -164,7 +164,7 @@ async function analyzeMood(text) {
   return "neutral";
 }
 
-// Validate the entry, show a brief loading state, and render its mood result.
+// Validate the combined card text, preserve the loading state, and render its mood result.
 analyzeButton.addEventListener("click", async () => {
   // Combine every written part of the page without adding empty fields.
   const entry = [
