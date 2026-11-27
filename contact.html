@@ -47,7 +47,13 @@
         <button class="button button-primary button-full" id="contact-submit" type="submit"><span class="contact-submit-label">Send</span> <span aria-hidden="true">💌</span></button>
       </form>
       <div class="thank-you-panel" id="thank-you" role="status" aria-live="polite" hidden>
-        <p class="thank-you-message">Thank you for your message 💜 I’ll read it soon!</p>
+        <div class="thank-you-message-wrap">
+          <p class="thank-you-message">Thank you for your message 💜 I’ll read it soon!</p>
+          <!-- Decorative sparkles twinkle around the confirmation after a successful send. -->
+          <div class="thank-you-sparkles" aria-hidden="true">
+            <span>✨</span><span>⭐</span><span>💜</span><span>🌟</span>
+          </div>
+        </div>
         <button class="button button-outline" id="send-another-message" type="button">Send another message</button>
       </div>
     </section>

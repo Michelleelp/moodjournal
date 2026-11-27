@@ -1,7 +1,7 @@
 // Load Transformers.js from the pinned CDN build and reuse one classifier pipeline.
 const TRANSFORMERS_MODULE_URL = "https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2";
 const MODEL_NAME = "MicahB/emotion_text_classifier";
-const EMOTION_LABELS = ["anger", "disgust", "fear", "joy", "neutral", "sadness", "surprise"];
+export const EMOTION_LABELS = ["anger", "disgust", "fear", "joy", "neutral", "sadness", "surprise"];
 
 let emotionPipelinePromise;
 

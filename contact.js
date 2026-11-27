@@ -23,6 +23,7 @@ const limits = { name: 100, email: 200, message: 2000 };
 let cooldownUntil = 0;
 let cooldownInterval = null;
 let isSending = false;
+let thankYouCelebrationTimer = null;
 
 // Keep the character count in sync with the message textarea.
 function updateMessageCounter() {
@@ -117,6 +118,46 @@ function waitForAnimation() {
   return new Promise((resolve) => window.setTimeout(resolve, 240));
 }
 
+// Celebrate a successful write with a viewport-clipped burst from the Send button.
+function playSendSparkles() {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    return;
+  }
+
+  const buttonBounds = submitButton.getBoundingClientRect();
+  const burst = document.createElement("div");
+  const symbols = ["✨", "⭐", "💜", "🌟"];
+  const particleCount = 20 + Math.floor(Math.random() * 11);
+  burst.className = "contact-sparkle-burst";
+  burst.setAttribute("aria-hidden", "true");
+
+  for (let index = 0; index < particleCount; index += 1) {
+    const particle = document.createElement("span");
+    const angle = Math.random() * Math.PI * 2;
+    const distance = 55 + Math.random() * 125;
+    particle.className = "contact-sparkle-particle";
+    particle.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+    particle.style.left = `${buttonBounds.left + buttonBounds.width / 2}px`;
+    particle.style.top = `${buttonBounds.top + buttonBounds.height / 2}px`;
+    particle.style.setProperty("--sparkle-x", `${Math.cos(angle) * distance}px`);
+    particle.style.setProperty("--sparkle-y", `${Math.sin(angle) * distance}px`);
+    particle.style.setProperty("--sparkle-size", `${15 + Math.random() * 18}px`);
+    particle.style.setProperty("--sparkle-rotation", `${Math.random() * 720 - 360}deg`);
+    particle.style.setProperty("--sparkle-duration", `${1050 + Math.random() * 300}ms`);
+    particle.addEventListener("animationend", () => {
+      particle.remove();
+      if (!burst.childElementCount) {
+        burst.remove();
+      }
+    }, { once: true });
+    burst.append(particle);
+  }
+
+  document.body.append(burst);
+  // Also clean up if the browser interrupts CSS animation events during navigation.
+  window.setTimeout(() => burst.remove(), 1500);
+}
+
 // Fade the form away and reveal the thank-you panel only after a successful write.
 async function showThankYou() {
   contactForm.classList.add("is-hiding");
@@ -125,13 +166,22 @@ async function showThankYou() {
   contactForm.classList.remove("is-hiding");
 
   thankYou.hidden = false;
-  window.requestAnimationFrame(() => thankYou.classList.add("is-visible"));
+  window.requestAnimationFrame(() => {
+    thankYou.classList.add("is-visible", "is-celebrating");
+    window.clearTimeout(thankYouCelebrationTimer);
+    thankYouCelebrationTimer = window.setTimeout(() => {
+      thankYou.classList.remove("is-celebrating");
+      thankYouCelebrationTimer = null;
+    }, 2000);
+  });
 }
 
 // Reset to a clean form and reapply the signed-in email and any active cooldown.
 async function showEmptyForm() {
   sendAnotherButton.disabled = true;
-  thankYou.classList.remove("is-visible");
+  thankYou.classList.remove("is-visible", "is-celebrating");
+  window.clearTimeout(thankYouCelebrationTimer);
+  thankYouCelebrationTimer = null;
   await waitForAnimation();
   thankYou.hidden = true;
 
@@ -186,6 +236,12 @@ contactForm.addEventListener("submit", async (event) => {
     }
 
     await addDoc(collection(db, "messages"), messageDocument);
+    // Keep a decorative failure from changing the success state of the saved message.
+    try {
+      playSendSparkles();
+    } catch (error) {
+      console.error("[MoodJournal] Could not play the contact celebration.", error);
+    }
     cooldownUntil = Date.now() + 30000;
     contactForm.reset();
     updateMessageCounter();

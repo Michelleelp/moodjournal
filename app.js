@@ -1,4 +1,4 @@
-import { detectEmotion, loadEmotionModel } from "./huggingface.js";
+import { detectEmotion, EMOTION_LABELS, loadEmotionModel } from "./huggingface.js";
 
 // Preview journal entries are kept in this file until storage is connected.
 const exampleEntries = [
@@ -98,9 +98,88 @@ const resultEmoji = document.querySelector("#result-emoji");
 const resultMood = document.querySelector("#result-mood");
 const resultMessage = document.querySelector("#result-message");
 const moodResult = document.querySelector("#mood-result");
+const emotionScoreSection = document.querySelector("#emotion-score-section");
+const emotionScoreList = document.querySelector("#emotion-score-list");
+const todayHeartAction = document.querySelector("#today-heart-action");
+const todayHeartConfirmation = document.querySelector("#today-heart-confirmation");
+let pendingTodayMood = null;
+
+const heartColorEmojis = {
+  joy: "💛",
+  sadness: "💙",
+  anger: "🧡",
+  fear: "💜",
+  surprise: "🩵",
+  disgust: "💚",
+  neutral: "💜"
+};
+
+// Render only the seven sorted score rows so the result card needs no extra heading.
+function renderEmotionScores(scores) {
+  const scoreEntries = scores && EMOTION_LABELS.every((label) => Number.isFinite(scores[label]))
+    ? EMOTION_LABELS.map((label) => ({ label, score: scores[label] }))
+      .sort((first, second) => second.score - first.score)
+    : [];
+
+  emotionScoreList.replaceChildren();
+  emotionScoreSection.hidden = scoreEntries.length !== EMOTION_LABELS.length;
+  if (emotionScoreSection.hidden) {
+    return;
+  }
+
+  const rows = scoreEntries.map(({ label, score }, index) => {
+    const percent = Math.round(Math.max(0, Math.min(1, score)) * 100);
+    const row = document.createElement("div");
+    row.className = "emotion-score-row";
+    row.dataset.mood = label;
+    row.setAttribute("role", "listitem");
+    row.style.setProperty("--score-percent", `${percent}%`);
+    row.style.setProperty("--score-delay", `${index * 70}ms`);
+    if (index === 0) {
+      row.classList.add("is-top-score");
+    }
+
+    const emoji = document.createElement("span");
+    emoji.className = "emotion-score-emoji";
+    emoji.setAttribute("aria-hidden", "true");
+    emoji.textContent = moodDetails[label].emoji;
+
+    const name = document.createElement("span");
+    name.className = "emotion-score-name";
+    name.textContent = moodDetails[label].name;
+
+    const track = document.createElement("span");
+    track.className = "emotion-score-track";
+    track.setAttribute("role", "meter");
+    track.setAttribute("aria-label", `${moodDetails[label].name} score`);
+    track.setAttribute("aria-valuemin", "0");
+    track.setAttribute("aria-valuemax", "100");
+    track.setAttribute("aria-valuenow", String(percent));
+
+    const fill = document.createElement("span");
+    fill.className = "emotion-score-fill";
+    track.append(fill);
+
+    const value = document.createElement("span");
+    value.className = "emotion-score-value";
+    value.textContent = `${percent}%`;
+    value.setAttribute("aria-label", `${moodDetails[label].name} ${percent}%`);
+
+    row.append(emoji, name, track, value);
+    return row;
+  });
+
+  emotionScoreList.append(...rows);
+  // Give the initial zero-width tracks a paint before starting their staggered fills.
+  window.requestAnimationFrame(() => {
+    window.requestAnimationFrame(() => {
+      rows.forEach((row) => row.classList.add("is-animated"));
+    });
+  });
+}
 
 // Show the chosen mood with its emoji, supportive copy, and animated card.
-function showMood(moodName) {
+function showMood(moodName, scores = null) {
   if (!Object.prototype.hasOwnProperty.call(moodDetails, moodName)) {
     throw new RangeError(`Unknown mood: ${moodName}`);
   }
@@ -110,6 +189,7 @@ function showMood(moodName) {
   resultMood.textContent = mood.name;
   resultMessage.textContent = mood.message;
   moodResult.dataset.mood = moodName;
+  renderEmotionScores(scores);
 
   if (moodResult.hidden) {
     moodResult.hidden = false;
@@ -191,15 +271,51 @@ async function analyzeMood(text) {
       throw new Error("Emotion model returned an unsupported mood label.");
     }
 
-    return detected.label;
+    const scores = detected.scores &&
+      EMOTION_LABELS.every((label) => Number.isFinite(detected.scores[label]))
+      ? detected.scores
+      : null;
+    return { label: detected.label, scores };
   } catch (error) {
     console.error("[MoodJournal] Emotion model analysis failed; using keyword helper.", error);
     usedKeywordFallback = true;
-    return keywordFallback(text);
+    return { label: keywordFallback(text), scores: null };
   } finally {
     window.clearTimeout(timeoutId);
   }
 }
+
+// Show the detected mood's effect on today's heart or offer a deliberate override.
+function updateTodayHeartStatus(moodName, result) {
+  pendingTodayMood = moodName;
+  const mood = moodDetails[moodName];
+  if (result.applied) {
+    todayHeartAction.hidden = true;
+    todayHeartConfirmation.textContent =
+      `Today's heart is now ${mood.name} ${heartColorEmojis[moodName]}`;
+    todayHeartConfirmation.hidden = false;
+    return;
+  }
+
+  todayHeartAction.textContent = `Use ${mood.name} for today's heart 💜`;
+  todayHeartAction.hidden = false;
+  todayHeartConfirmation.hidden = true;
+}
+
+todayHeartAction.addEventListener("click", () => {
+  if (!pendingTodayMood) {
+    return;
+  }
+
+  try {
+    const result = window.applyDetectedMoodToToday(pendingTodayMood, { force: true });
+    updateTodayHeartStatus(pendingTodayMood, result);
+  } catch (error) {
+    console.error("[MoodJournal] Could not update today's mood heart.", error);
+    todayHeartConfirmation.textContent = "Today's heart could not be updated. Please try again 💜";
+    todayHeartConfirmation.hidden = false;
+  }
+});
 
 // Warm the cached model on page open so the first analysis can begin sooner.
 async function warmEmotionModel() {
@@ -234,16 +350,28 @@ analyzeButton.addEventListener("click", async () => {
   journalMessage.textContent = "";
   journalMessage.hidden = true;
   fallbackNote.hidden = true;
+  todayHeartAction.hidden = true;
+  todayHeartConfirmation.hidden = true;
   analyzeButton.disabled = true;
   analyzeButtonLabel.textContent = "Analyzing... ✨";
   analyzeButtonIcon.hidden = true;
 
   try {
-    const mood = await analyzeMood(entry);
+    const analysis = await analyzeMood(entry);
     await new Promise((resolve) => window.setTimeout(resolve, 1000));
-    showMood(mood);
+    showMood(analysis.label, analysis.scores);
     fallbackNote.hidden = !usedKeywordFallback;
     aiStatus.hidden = true;
+
+    try {
+      const todayUpdate = window.applyDetectedMoodToToday(analysis.label);
+      updateTodayHeartStatus(analysis.label, todayUpdate);
+    } catch (error) {
+      console.error("[MoodJournal] Could not update today's mood heart.", error);
+      todayHeartConfirmation.textContent = "Today's heart could not be updated. Please try again 💜";
+      todayHeartConfirmation.hidden = false;
+    }
+
     moodResult.scrollIntoView({ behavior: "smooth", block: "nearest" });
   } catch (error) {
     console.error("[MoodJournal] Could not display the mood analysis result.", error);

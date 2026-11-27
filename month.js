@@ -17,11 +17,18 @@ const monthLegend = document.querySelector("#month-legend");
 const today = new Date();
 let displayedMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 let monthData = loadMonthData(displayedMonth);
+let todayHeartPopPending = false;
 
 // Keep month storage keys in the yyyy-mm format for easy future syncing.
 function getMonthStorageKey(monthDate) {
   const monthNumber = String(monthDate.getMonth() + 1).padStart(2, "0");
   return `moodjournal_month_${monthDate.getFullYear()}-${monthNumber}`;
+}
+
+// Keep automatic-color metadata separate so the existing day-to-mood data stays unchanged.
+function getAutomaticDaysStorageKey(monthDate) {
+  const monthNumber = String(monthDate.getMonth() + 1).padStart(2, "0");
+  return `moodjournal_month_auto_${monthDate.getFullYear()}-${monthNumber}`;
 }
 
 // Load one month of day-to-mood data from local storage.
@@ -42,6 +49,74 @@ function loadMonthData(monthDate) {
 function saveMonthData(monthDate, data) {
   window.localStorage.setItem(getMonthStorageKey(monthDate), JSON.stringify(data));
 }
+
+function loadAutomaticallyColoredDays(monthDate) {
+  const serializedDays = window.localStorage.getItem(getAutomaticDaysStorageKey(monthDate));
+  if (serializedDays === null) {
+    return new Set();
+  }
+
+  const parsedDays = JSON.parse(serializedDays);
+  if (!Array.isArray(parsedDays) || parsedDays.some((day) => typeof day !== "string")) {
+    throw new TypeError(`Automatic mood markers for ${getAutomaticDaysStorageKey(monthDate)} must be an array of day numbers.`);
+  }
+  return new Set(parsedDays);
+}
+
+function saveAutomaticallyColoredDays(monthDate, days) {
+  const storageKey = getAutomaticDaysStorageKey(monthDate);
+  if (days.size === 0) {
+    window.localStorage.removeItem(storageKey);
+    return;
+  }
+  window.localStorage.setItem(storageKey, JSON.stringify(Array.from(days)));
+}
+
+function removeAutomaticMoodMarker(monthDate, dayNumber) {
+  const automaticDays = loadAutomaticallyColoredDays(monthDate);
+  automaticDays.delete(String(dayNumber));
+  saveAutomaticallyColoredDays(monthDate, automaticDays);
+}
+
+// Apply AI mood colors only when today's color is empty or was previously set automatically.
+function applyDetectedMoodToToday(moodKey, { force = false } = {}) {
+  const mood = monthMoodOptions.find((option) => option.key === moodKey);
+  if (!mood) {
+    throw new RangeError(`Unknown detected mood: ${moodKey}`);
+  }
+
+  const currentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const dayKey = String(today.getDate());
+  const currentMonthData = loadMonthData(currentMonth);
+  const automaticDays = loadAutomaticallyColoredDays(currentMonth);
+  const existingMood = currentMonthData[dayKey];
+  if (existingMood && !automaticDays.has(dayKey) && !force) {
+    return { applied: false, manual: true, existingMood };
+  }
+
+  currentMonthData[dayKey] = mood.name;
+  saveMonthData(currentMonth, currentMonthData);
+  if (force) {
+    automaticDays.delete(dayKey);
+  } else {
+    automaticDays.add(dayKey);
+  }
+  saveAutomaticallyColoredDays(currentMonth, automaticDays);
+
+  const isDisplayedMonth = displayedMonth.getFullYear() === currentMonth.getFullYear()
+    && displayedMonth.getMonth() === currentMonth.getMonth();
+  todayHeartPopPending = true;
+  if (isDisplayedMonth) {
+    monthData = currentMonthData;
+    if (monthToggle.getAttribute("aria-expanded") === "true") {
+      renderMonthCalendar();
+    }
+  }
+
+  return { applied: true, mood: mood.name };
+}
+
+window.applyDetectedMoodToToday = applyDetectedMoodToToday;
 
 // Close any open day palette and reset its cell's stacking order.
 function closeOpenPalettes() {
@@ -85,6 +160,7 @@ function createMoodPalette(dayNumber, columnNumber) {
     option.addEventListener("click", () => {
       monthData[String(dayNumber)] = mood.name;
       saveMonthData(displayedMonth, monthData);
+      removeAutomaticMoodMarker(displayedMonth, dayNumber);
       renderMonthCalendar();
     });
     palette.append(option);
@@ -97,6 +173,7 @@ function createMoodPalette(dayNumber, columnNumber) {
   clearButton.addEventListener("click", () => {
     delete monthData[String(dayNumber)];
     saveMonthData(displayedMonth, monthData);
+    removeAutomaticMoodMarker(displayedMonth, dayNumber);
     renderMonthCalendar();
   });
   palette.append(clearButton);
@@ -159,6 +236,15 @@ function renderMonthCalendar() {
     } else {
       heartButton.title = `Set mood for day ${dayNumber}`;
     }
+    if (isToday && todayHeartPopPending && monthToggle.getAttribute("aria-expanded") === "true") {
+      heartButton.classList.add("is-auto-pop");
+      heartButton.addEventListener("animationend", (event) => {
+        if (event.animationName === "today-heart-pop") {
+          heartButton.classList.remove("is-auto-pop");
+        }
+      }, { once: true });
+      todayHeartPopPending = false;
+    }
 
     const palette = createMoodPalette(dayNumber, columnNumber);
     heartButton.addEventListener("click", () => {
@@ -205,6 +291,9 @@ monthToggle.addEventListener("click", () => {
   monthCalendarPanel.classList.toggle("is-open", isOpening);
   monthCalendarPanel.setAttribute("aria-hidden", String(!isOpening));
   monthCalendarPanel.inert = !isOpening;
+  if (isOpening) {
+    renderMonthCalendar();
+  }
 });
 
 // Navigate between months and load each month's saved guest data.

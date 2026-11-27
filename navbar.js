@@ -19,9 +19,10 @@ function renderNavbar() {
 
   navbarHost.innerHTML = `
     <nav class="navbar page-width" aria-label="Main navigation">
+      <!-- Keep the large logo and wordmark together at the far-left edge. -->
       <a class="brand" href="index.html" aria-label="MoodJournal home">
         <img class="brand-logo" src="assets/logo.png" alt="MoodJournal logo">
-        <span>MoodJournal</span>
+        <span class="brand-name">MoodJournal</span>
       </a>
       <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="main-menu">
         <span class="menu-toggle-label">Menu</span>

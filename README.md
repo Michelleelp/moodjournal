@@ -234,3 +234,86 @@ Capacidad usada: Transformers.js con el modelo MicahB/emotion_text_classifier (h
 Razón: detecta la emoción de lo que la persona escribe para mostrar un mensaje de apoyo que encaja con cómo se siente, algo que las palabras clave no logran.
 Prompts 14 y 15: (los de arriba) + qué hizo cada uno.
 Problema: Gradio estaba como "Paid". Solución: usé Transformers.js en el navegador. Después, la primera carga se sentía lenta, pero el modelo queda en caché y luego es rápido.
+---------------
+Update style.css, navbar.js and any page CSS in the MoodJournal project. Keep the soft purple and white cute style, all text in English. Do NOT change any Firebase, Hugging Face or form logic.
+
+1. Navbar layout: place the logo and the "MoodJournal" text at the far LEFT corner of the navbar (small left padding, about 16px to 24px). Make the logo bigger (about 72px tall on desktop, 52px on mobile) and put it right next to the text with a very small gap (about 6px), vertically centered, both inside the same link to index.html. Make the "MoodJournal" text much bigger and bolder (about 2rem to 2.2rem) with strong contrast.
+
+2. Navbar tabs: place the tabs "Journal", "Contact" and "Sign Up" (or "Logout" and the user email label when logged in) at the far RIGHT corner of the navbar (small right padding). Make them bigger: font about 1.25rem (20px), bold, more padding (about 14px 26px), keeping the notebook divider tab style and pastel colors. Make the navbar taller to fit comfortably. Keep it sticky and above the emoji rain. On mobile, keep it usable (collapse the tabs into a menu button).
+
+3. Bigger text everywhere: increase the font size across the whole site again. Set the root font-size so the base body text is about 20px to 21px on desktop, labels and helper texts at least 17px, inputs, textareas and buttons at least 19px, the email label in the navbar at least 16px, the footer at least 17px, and scale headings proportionally. Use rem units so everything scales together. Check that the welcome card, journal card, mood result card, month tracker, past entries, contact form and the auth modal still look balanced, do not overflow, and are responsive on desktop and mobile.
+
+Add comments in the code explaining each change.
+
+
+
+
+----------------------------
+
+
+Update app.html, app.js (or create heart.js and include it in app.html) and style.css in the MoodJournal project. Keep the soft purple and white cute style. Do NOT change any Firebase or Hugging Face logic.
+
+Add an interactive floating heart on the Journal page (app.html only):
+
+1. A cute heart (use the 💜 emoji or an inline SVG heart in soft purple/pink, about 70px to 90px) that is always beating (heartbeat animation: grows and shrinks in a loop with a soft glow).
+
+2. It wanders slowly around the WHOLE page: it picks random target positions across the viewport and glides smoothly to them (about 6 to 10 seconds per trip, smooth easing), then picks another, forever. It must stay inside the visible screen, and it must float above the page background but never block the user: only the heart itself receives mouse events, it must not cover buttons or the textarea for long (z-index above the cards but below the navbar, and it keeps moving).
+
+3. Mouse interaction:
+   - On hover, the heart reacts: it wiggles, does a small happy jump or spin, beats faster, and little mini hearts (💜 💕 ✨) pop out around it.
+   - On click or tap, it bursts into a small shower of mini hearts that fade away, then comes back with a small scale-in animation and keeps wandering.
+   - Optional: a small speech bubble that shows a random kind message for 2 seconds, such as "You're doing great 💜", "I'm proud of you ✨", "Take a deep breath 🌸".
+
+4. Pause control: the existing emoji rain pause button must also pause or resume the heart's wandering and effects (use the same localStorage choice). Respect prefers-reduced-motion by keeping the heart still in one corner with only a very gentle beat.
+
+5. Make it work on mobile (touch) and keep performance smooth (use CSS transforms and requestAnimationFrame, avoid layout thrashing, remove mini hearts from the DOM after their animation ends).
+
+Add comments in the code explaining each part.
+
+
+
+----------------------
+ Update contact.html, contact.js and style.css in the MoodJournal project. Do NOT change how messages are validated or saved in Firestore.
+
+When the person clicks "Send" and the message is sent successfully, play a sparkle celebration:
+
+1. A burst of sparkles (✨ ⭐ 💜 🌟) shoots out from the Send button in all directions (about 20 to 30 particles with random sizes, directions, distances and rotation), fading out in about 1.2 seconds. Particles are created with JavaScript, use CSS transforms and animations, and are removed from the DOM after they finish.
+
+2. Right after, when the "Thank you" message appears, make it shine: a soft glow pulse around the card and a few sparkles twinkling around its edges for about 2 seconds.
+
+3. Also play a smaller version of the burst on the button when the person simply clicks it with an invalid form? No: only play the sparkles on a successful send.
+
+4. Respect prefers-reduced-motion: if enabled, skip the particle animation and only show a gentle glow. Make sure the sparkles never block clicks (pointer-events none) and that the page does not get a horizontal scrollbar.
+
+Add comments in the code explaining each part.
+
+
+
+----------------------
+Update contact.html, contact.js and style.css in the MoodJournal project. Do NOT change how messages are validated or saved in Firestore.
+
+When the person clicks "Send" and the message is sent successfully, play a sparkle celebration:
+
+1. A burst of sparkles (✨ ⭐ 💜 🌟) shoots out from the Send button in all directions (about 20 to 30 particles with random sizes, directions, distances and rotation), fading out in about 1.2 seconds. Particles are created with JavaScript, use CSS transforms and animations, and are removed from the DOM after they finish.
+
+2. Right after, when the "Thank you" message appears, make it shine: a soft glow pulse around the card and a few sparkles twinkling around its edges for about 2 seconds.
+
+3. Also play a smaller version of the burst on the button when the person simply clicks it with an invalid form? No: only play the sparkles on a successful send.
+
+4. Respect prefers-reduced-motion: if enabled, skip the particle animation and only show a gentle glow. Make sure the sparkles never block clicks (pointer-events none) and that the page does not get a horizontal scrollbar.
+
+Add comments in the code explaining each part.
+
+
+
+----------------
+
+
+Update app.html, app.js and style.css in the MoodJournal project.
+
+In the mood result card:
+1. Remove the small label "YOUR MOOD CHECK-IN" shown above the mood name (remove it from the HTML and from any JavaScript that creates or fills it).
+2. Remove the title "How the AI read your words 🤗" above the emotion percentage bars (also remove its HTML, JS and unused CSS).
+3. Keep the emotion bars, the percentages, the mood name, the big emoji with the heartbeat animation, the supportive message, the "Today's heart is now ..." line and the gradients exactly as they are. Adjust the spacing so the card still looks balanced after removing both texts.
+
+Add comments in the code explaining the change.
