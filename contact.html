@@ -16,30 +16,40 @@
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <script src="navbar.js" defer></script>
-  <script src="contact.js" defer></script>
+  <script type="module" src="contact.js"></script>
   <script src="effects.js" defer></script>
 </head>
 <body>
   <!-- Shared navigation and account controls are injected on every page. -->
   <header id="navbar" class="site-header"></header>
 
-  <!-- Contact form and local-only submission confirmation -->
+  <!-- Contact form sends messages to Firestore and swaps to a confirmation after success. -->
   <main class="page-width contact-page">
     <section class="contact-card surface-card">
       <div class="contact-decoration" aria-hidden="true">💌</div>
       <div class="section-eyebrow">We’re here to listen</div>
       <h1>Say hello</h1>
       <p class="muted-copy">Questions, ideas, or just a kind thought? We’d love to hear from you.</p>
-      <form class="contact-form" id="contact-form">
+      <form class="contact-form" id="contact-form" novalidate>
         <label for="contact-name">Name</label>
-        <input id="contact-name" name="name" type="text" placeholder="Your name" autocomplete="name" required>
+        <input id="contact-name" name="name" type="text" placeholder="Your name" autocomplete="name" maxlength="100" aria-describedby="contact-name-error" required>
+        <p class="field-error" id="contact-name-error" role="alert" hidden></p>
         <label for="contact-email">Email</label>
-        <input id="contact-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required>
+        <input id="contact-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" maxlength="200" aria-describedby="contact-email-error" required>
+        <p class="field-error" id="contact-email-error" role="alert" hidden></p>
         <label for="contact-message">Message</label>
-        <textarea id="contact-message" name="message" rows="5" placeholder="Write us a little note..." required></textarea>
-        <button class="button button-primary button-full" type="submit">Send <span aria-hidden="true">💌</span></button>
+        <textarea id="contact-message" name="message" rows="5" maxlength="2000" placeholder="Write us a little note..." aria-describedby="contact-message-counter contact-message-error" required></textarea>
+        <div class="contact-message-meta">
+          <span class="character-count" id="contact-message-counter" aria-live="polite">0 / 2000 characters</span>
+        </div>
+        <p class="field-error" id="contact-message-error" role="alert" hidden></p>
+        <p class="form-message contact-status" id="contact-status" role="status" aria-live="polite" hidden></p>
+        <button class="button button-primary button-full" id="contact-submit" type="submit"><span class="contact-submit-label">Send</span> <span aria-hidden="true">💌</span></button>
       </form>
-      <p class="thank-you-message" id="thank-you" role="status" aria-live="polite" hidden>Thank you for reaching out! Your message is ready for us (this demo doesn’t send it anywhere yet). 💜</p>
+      <div class="thank-you-panel" id="thank-you" role="status" aria-live="polite" hidden>
+        <p class="thank-you-message">Thank you for your message 💜 I’ll read it soon!</p>
+        <button class="button button-outline" id="send-another-message" type="button">Send another message</button>
+      </div>
     </section>
   </main>
   <!-- Shared footer attribution shown on every page. -->
