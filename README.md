@@ -228,3 +228,9 @@ Requirements:
 4. If the fallback was used, show a small note: "Analyzed with the keyword helper".
 5. Keep showMood(moodName), the gradients, the emoji animation and the month tracker working as before.
 6. Add try/catch with console.error messages and comments explaining each part.
+
+
+Capacidad usada: Transformers.js con el modelo MicahB/emotion_text_classifier (https://huggingface.co/MicahB/emotion_text_classifier).
+Razón: detecta la emoción de lo que la persona escribe para mostrar un mensaje de apoyo que encaja con cómo se siente, algo que las palabras clave no logran.
+Prompts 14 y 15: (los de arriba) + qué hizo cada uno.
+Problema: Gradio estaba como "Paid". Solución: usé Transformers.js en el navegador. Después, la primera carga se sentía lenta, pero el modelo queda en caché y luego es rápido.
