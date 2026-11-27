@@ -209,3 +209,7 @@ Add comments in the code explaining each part.
 4. Readability: make the labels, placeholders and typed text in this card larger and darker so they are easy to read (typed text about 18px to 19px, placeholders in a darker gray-purple with enough contrast, labels bold and larger). Also increase the text size and contrast in the result card, the "My month in colors" card and the "My past entries" section.
 
 Add comments in the code explaining each part.
+
+
+
+----------------
